@@ -1,0 +1,201 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 980 520" width="980" height="520" font-family="Georgia, 'Times New Roman', serif">
+
+  <!-- Background -->
+  <rect width="980" height="520" fill="#f8f9fa" rx="8"/>
+
+  <!-- Title -->
+  <text x="490" y="32" text-anchor="middle" font-size="15" font-weight="bold" fill="#1a1a2e">Fig. 2: Quantum-Safe Auditor — Role in the PQC Migration Lifecycle</text>
+  <text x="490" y="50" text-anchor="middle" font-size="10.5" fill="#666" font-style="italic">The tool operationalizes Step 2 (Discover) and Step 3 (Prioritize), bridging inventory to remediation</text>
+
+  <!-- ============================================================ -->
+  <!-- PHASE HEADERS (5 phases) -->
+  <!-- ============================================================ -->
+
+  <!-- Phase colors: #b0b8c8 for inactive, #ff9944 for our tool phases -->
+
+  <!-- Phase 1: Inventory -->
+  <rect x="20" y="65" width="155" height="38" fill="#3a4a6b" rx="6"/>
+  <text x="97" y="80" text-anchor="middle" font-size="10" fill="#aab4c8">PHASE 1</text>
+  <text x="97" y="95" text-anchor="middle" font-size="11" font-weight="bold" fill="#ffffff">Inventory</text>
+
+  <!-- Phase 2: Discover — OUR TOOL -->
+  <rect x="195" y="65" width="185" height="38" fill="#cc5500" rx="6"/>
+  <text x="287" y="80" text-anchor="middle" font-size="10" fill="#ffe0c0">PHASE 2 ★ OUR TOOL</text>
+  <text x="287" y="95" text-anchor="middle" font-size="11" font-weight="bold" fill="#ffffff">Discover &amp; Analyze</text>
+
+  <!-- Phase 3: Prioritize — OUR TOOL -->
+  <rect x="400" y="65" width="185" height="38" fill="#cc5500" rx="6"/>
+  <text x="492" y="80" text-anchor="middle" font-size="10" fill="#ffe0c0">PHASE 3 ★ OUR TOOL</text>
+  <text x="492" y="95" text-anchor="middle" font-size="11" font-weight="bold" fill="#ffffff">Prioritize &amp; Plan</text>
+
+  <!-- Phase 4: Remediate -->
+  <rect x="605" y="65" width="175" height="38" fill="#3a4a6b" rx="6"/>
+  <text x="692" y="80" text-anchor="middle" font-size="10" fill="#aab4c8">PHASE 4</text>
+  <text x="692" y="95" text-anchor="middle" font-size="11" font-weight="bold" fill="#ffffff">Remediate</text>
+
+  <!-- Phase 5: Verify -->
+  <rect x="800" y="65" width="165" height="38" fill="#3a4a6b" rx="6"/>
+  <text x="882" y="80" text-anchor="middle" font-size="10" fill="#aab4c8">PHASE 5</text>
+  <text x="882" y="95" text-anchor="middle" font-size="11" font-weight="bold" fill="#ffffff">Verify &amp; Certify</text>
+
+  <!-- Phase connector arrows in header -->
+  <defs>
+    <marker id="arrDark" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L7,3 z" fill="#aab4c8"/>
+    </marker>
+    <marker id="arrOrange" markerWidth="7" markerHeight="7" refX="5" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L7,3 z" fill="#ff9944"/>
+    </marker>
+  </defs>
+  <line x1="175" y1="84" x2="192" y2="84" stroke="#ff9944" stroke-width="2" marker-end="url(#arrOrange)"/>
+  <line x1="380" y1="84" x2="397" y2="84" stroke="#ff9944" stroke-width="2" marker-end="url(#arrOrange)"/>
+  <line x1="585" y1="84" x2="602" y2="84" stroke="#aab4c8" stroke-width="2" marker-end="url(#arrDark)"/>
+  <line x1="780" y1="84" x2="797" y2="84" stroke="#aab4c8" stroke-width="2" marker-end="url(#arrDark)"/>
+
+  <!-- ============================================================ -->
+  <!-- ROW 1: INPUT BOXES -->
+  <!-- ============================================================ -->
+
+  <!-- Phase 1 box -->
+  <rect x="20" y="120" width="155" height="110" fill="#ffffff" rx="6" stroke="#3a4a6b" stroke-width="1.5"/>
+  <text x="97" y="140" text-anchor="middle" font-size="10" font-weight="bold" fill="#3a4a6b">Manual / existing audit</text>
+  <line x1="35" y1="147" x2="160" y2="147" stroke="#dce0e8" stroke-width="1"/>
+  <text x="40" y="163" font-size="9.5" fill="#555">• List all repos</text>
+  <text x="40" y="178" font-size="9.5" fill="#555">• Identify crypto usage areas</text>
+  <text x="40" y="193" font-size="9.5" fill="#555">• Gather library manifests</text>
+  <text x="40" y="208" font-size="9.5" fill="#888" font-style="italic">Done manually today</text>
+
+  <!-- Phase 2 box (OUR TOOL) -->
+  <rect x="195" y="120" width="185" height="110" fill="#fff8f4" rx="6" stroke="#ff7722" stroke-width="2"/>
+  <text x="287" y="140" text-anchor="middle" font-size="10" font-weight="bold" fill="#cc4400">Quantum-Safe Auditor</text>
+  <line x1="210" y1="147" x2="365" y2="147" stroke="#ffccaa" stroke-width="1"/>
+  <text x="215" y="163" font-size="9.5" fill="#333">• GitHub API ingestion</text>
+  <text x="215" y="178" font-size="9.5" fill="#333">• 15-class regex scanner (Pass 1)</text>
+  <text x="215" y="193" font-size="9.5" fill="#333">• Claude LLM enrichment (Pass 2)</text>
+  <text x="215" y="208" font-size="9.5" fill="#333">• 12 languages supported</text>
+
+  <!-- Phase 3 box (OUR TOOL) -->
+  <rect x="400" y="120" width="185" height="110" fill="#fff8f4" rx="6" stroke="#ff7722" stroke-width="2"/>
+  <text x="492" y="140" text-anchor="middle" font-size="10" font-weight="bold" fill="#cc4400">VQE Threat Scoring</text>
+  <line x1="415" y1="147" x2="570" y2="147" stroke="#ffccaa" stroke-width="1"/>
+  <text x="420" y="163" font-size="9.5" fill="#333">• Qubit-weighted severity score</text>
+  <text x="420" y="178" font-size="9.5" fill="#333">• Shor vs Grover classification</text>
+  <text x="420" y="193" font-size="9.5" fill="#333">• Repo-level threat score (0–10)</text>
+  <text x="420" y="208" font-size="9.5" fill="#333">• GitHub Issues auto-created</text>
+
+  <!-- Phase 4 box -->
+  <rect x="605" y="120" width="175" height="110" fill="#ffffff" rx="6" stroke="#3a4a6b" stroke-width="1.5"/>
+  <text x="692" y="140" text-anchor="middle" font-size="10" font-weight="bold" fill="#3a4a6b">Developer Migration</text>
+  <line x1="620" y1="147" x2="765" y2="147" stroke="#dce0e8" stroke-width="1"/>
+  <text x="625" y="163" font-size="9.5" fill="#555">• Replace RSA → ML-KEM</text>
+  <text x="625" y="178" font-size="9.5" fill="#555">• Replace ECDSA → ML-DSA</text>
+  <text x="625" y="193" font-size="9.5" fill="#555">• Upgrade AES-128 → AES-256</text>
+  <text x="625" y="208" font-size="9.5" fill="#555">• Guided by FIPS 203/204/205</text>
+
+  <!-- Phase 5 box -->
+  <rect x="800" y="120" width="165" height="110" fill="#ffffff" rx="6" stroke="#3a4a6b" stroke-width="1.5"/>
+  <text x="882" y="140" text-anchor="middle" font-size="10" font-weight="bold" fill="#3a4a6b">Re-audit + CNSA 2.0</text>
+  <line x1="815" y1="147" x2="950" y2="147" stroke="#dce0e8" stroke-width="1"/>
+  <text x="820" y="163" font-size="9.5" fill="#555">• Re-run Quantum-Safe Auditor</text>
+  <text x="820" y="178" font-size="9.5" fill="#555">• Zero findings = compliant</text>
+  <text x="820" y="193" font-size="9.5" fill="#555">• Export for CNSA 2.0 audit trail</text>
+  <text x="820" y="208" font-size="9.5" fill="#555">• Notion report for leadership</text>
+
+  <!-- Row 1 arrows -->
+  <defs>
+    <marker id="arrRow" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#999"/>
+    </marker>
+  </defs>
+  <line x1="175" y1="175" x2="192" y2="175" stroke="#ff7722" stroke-width="2.5" marker-end="url(#arrOrange)"/>
+  <line x1="380" y1="175" x2="397" y2="175" stroke="#ff7722" stroke-width="2.5" marker-end="url(#arrOrange)"/>
+  <line x1="585" y1="175" x2="602" y2="175" stroke="#999" stroke-width="1.5" marker-end="url(#arrRow)"/>
+  <line x1="780" y1="175" x2="797" y2="175" stroke="#999" stroke-width="1.5" marker-end="url(#arrRow)"/>
+
+  <!-- ============================================================ -->
+  <!-- ROW 2: OUTPUTS -->
+  <!-- ============================================================ -->
+
+  <!-- Phase 2 output -->
+  <rect x="195" y="255" width="185" height="95" fill="#1a1a2e" rx="6"/>
+  <text x="287" y="274" text-anchor="middle" font-size="10" font-weight="bold" fill="#ff9944">Output: Finding Report</text>
+  <line x1="210" y1="280" x2="365" y2="280" stroke="#444" stroke-width="1"/>
+  <text x="215" y="295" font-size="9.5" fill="#ccd6e0">• File, line, algorithm, severity</text>
+  <text x="215" y="310" font-size="9.5" fill="#ccd6e0">• AI context + enrichment tier</text>
+  <text x="215" y="325" font-size="9.5" fill="#ccd6e0">• P=71.98% R=100% F1=83.71%</text>
+  <text x="215" y="340" font-size="9.5" fill="#ccd6e0">• JSON + Notion page</text>
+
+  <!-- Phase 3 output -->
+  <rect x="400" y="255" width="185" height="95" fill="#1a1a2e" rx="6"/>
+  <text x="492" y="274" text-anchor="middle" font-size="10" font-weight="bold" fill="#ff9944">Output: Prioritized Backlog</text>
+  <line x1="415" y1="280" x2="570" y2="280" stroke="#444" stroke-width="1"/>
+  <text x="420" y="295" font-size="9.5" fill="#ccd6e0">• node-jwt: 7.00 (HIGH urgency)</text>
+  <text x="420" y="310" font-size="9.5" fill="#ccd6e0">• python-rsa: 6.53</text>
+  <text x="420" y="325" font-size="9.5" fill="#ccd6e0">• python-jose: 5.49</text>
+  <text x="420" y="340" font-size="9.5" fill="#ccd6e0">• bc-java: 4.20 (library code)</text>
+
+  <!-- Connector from box 2 to output 2 -->
+  <line x1="287" y1="230" x2="287" y2="252" stroke="#ff7722" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrOrange)"/>
+  <!-- Connector from box 3 to output 3 -->
+  <line x1="492" y1="230" x2="492" y2="252" stroke="#ff7722" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrOrange)"/>
+
+  <!-- Arrow from output 2 to output 3 -->
+  <line x1="380" y1="302" x2="397" y2="302" stroke="#ff9944" stroke-width="1.5" marker-end="url(#arrOrange)"/>
+
+  <!-- Arrow from output 3 to Phase 4 -->
+  <line x1="585" y1="302" x2="692" y2="234" stroke="#999" stroke-width="1.5" stroke-dasharray="4,3" marker-end="url(#arrRow)"/>
+
+  <!-- ============================================================ -->
+  <!-- KEY INSIGHT BOX -->
+  <!-- ============================================================ -->
+  <rect x="20" y="255" width="155" height="95" fill="#f0f4ff" rx="6" stroke="#3a4a6b" stroke-width="1.5"/>
+  <text x="97" y="275" text-anchor="middle" font-size="10" font-weight="bold" fill="#1a1a2e">Without this tool</text>
+  <line x1="35" y1="282" x2="160" y2="282" stroke="#dce0e8" stroke-width="1"/>
+  <text x="40" y="298" font-size="9.5" fill="#555">• Manual code review</text>
+  <text x="40" y="313" font-size="9.5" fill="#555">• Regex-only (high FP)</text>
+  <text x="40" y="328" font-size="9.5" fill="#555">• No quantum threat score</text>
+  <text x="40" y="343" font-size="9.5" fill="#555">• No NIST mapping</text>
+
+  <rect x="800" y="255" width="165" height="95" fill="#f0fff4" rx="6" stroke="#1a7a3a" stroke-width="1.5"/>
+  <text x="882" y="275" text-anchor="middle" font-size="10" font-weight="bold" fill="#1a7a3a">Compliance ready</text>
+  <line x1="815" y1="282" x2="950" y2="282" stroke="#c0e8c8" stroke-width="1"/>
+  <text x="820" y="298" font-size="9.5" fill="#2a6a3a">• CNSA 2.0 compliant</text>
+  <text x="820" y="313" font-size="9.5" fill="#2a6a3a">• FIPS 203/204/205 ready</text>
+  <text x="820" y="328" font-size="9.5" fill="#2a6a3a">• Zero vulnerable algorithms</text>
+  <text x="820" y="343" font-size="9.5" fill="#2a6a3a">• Audit trail documented</text>
+
+  <!-- ============================================================ -->
+  <!-- BOTTOM: NIST STANDARDS REFERENCE STRIP -->
+  <!-- ============================================================ -->
+  <rect x="20" y="370" width="945" height="80" fill="#1a1a2e" rx="6"/>
+  <text x="490" y="390" text-anchor="middle" font-size="11" font-weight="bold" fill="#ffffff">NIST Post-Quantum Standards — Embedded in Tool Output</text>
+  <line x1="40" y1="397" x2="950" y2="397" stroke="#333" stroke-width="1"/>
+
+  <!-- FIPS 203 -->
+  <rect x="40" y="405" width="205" height="36" fill="#0d2137" rx="4" stroke="#4a9eff" stroke-width="1"/>
+  <text x="142" y="419" text-anchor="middle" font-size="10" font-weight="bold" fill="#4a9eff">FIPS 203 — ML-KEM</text>
+  <text x="142" y="433" text-anchor="middle" font-size="9.5" fill="#aac8e8">Replaces: RSA, ECDH, DH, X25519</text>
+
+  <!-- FIPS 204 -->
+  <rect x="260" y="405" width="205" height="36" fill="#0d2137" rx="4" stroke="#7ed4a0" stroke-width="1"/>
+  <text x="362" y="419" text-anchor="middle" font-size="10" font-weight="bold" fill="#7ed4a0">FIPS 204 — ML-DSA</text>
+  <text x="362" y="433" text-anchor="middle" font-size="9.5" fill="#aac8e8">Replaces: ECDSA, DSA, Ed25519, PKCS#1</text>
+
+  <!-- FIPS 205 -->
+  <rect x="480" y="405" width="205" height="36" fill="#0d2137" rx="4" stroke="#ffcc44" stroke-width="1"/>
+  <text x="582" y="419" text-anchor="middle" font-size="10" font-weight="bold" fill="#ffcc44">FIPS 205 — SLH-DSA</text>
+  <text x="582" y="433" text-anchor="middle" font-size="9.5" fill="#aac8e8">Replaces: DSA, signature schemes</text>
+
+  <!-- Symmetric guidance -->
+  <rect x="700" y="405" width="238" height="36" fill="#0d2137" rx="4" stroke="#ff9944" stroke-width="1"/>
+  <text x="819" y="419" text-anchor="middle" font-size="10" font-weight="bold" fill="#ff9944">SP 800-131A / 175B</text>
+  <text x="819" y="433" text-anchor="middle" font-size="9.5" fill="#aac8e8">AES-128→256, SHA-1→SHA-3, retire RC4/3DES</text>
+
+  <!-- ============================================================ -->
+  <!-- BOTTOM NOTE -->
+  <!-- ============================================================ -->
+  <text x="490" y="470" text-anchor="middle" font-size="9.5" fill="#666" font-style="italic">Quantum-Safe Auditor automates Phases 2–3 of the NIST / CNSA 2.0 migration lifecycle. Phase 4 remediation is guided by per-finding NIST standard mappings embedded in the tool output.</text>
+  <text x="490" y="486" text-anchor="middle" font-size="9.5" fill="#666" font-style="italic">Tool output includes one GitHub Issue per algorithm family with line-level references and replacement recommendations, enabling teams to track migration progress through standard issue workflows.</text>
+  <text x="490" y="506" text-anchor="middle" font-size="9" fill="#999">Animesh Shaw · Quantum-Safe Code Auditor · arXiv preprint 2026 · github.com/animesh-shaw/quantum-safe-auditor</text>
+
+</svg>

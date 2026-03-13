@@ -1,0 +1,261 @@
+"""
+Notion MCP Client
+=================
+Creates structured audit reports in Notion via the Notion API.
+
+For production MCP integration, use:
+https://github.com/modelcontextprotocol/servers/tree/main/src/notion
+"""
+
+import logging
+from datetime import datetime
+from typing import Dict, Any, List
+
+import httpx
+
+logger = logging.getLogger(__name__)
+NOTION_API = "https://api.notion.com/v1"
+NOTION_VERSION = "2022-06-28"
+
+
+class NotionMCPClient:
+    """Client for Notion API — creates rich audit report pages."""
+
+    def __init__(self, token: str):
+        self.token = token
+        self.headers = {
+            "Authorization": f"Bearer {token}",
+            "Content-Type": "application/json",
+            "Notion-Version": NOTION_VERSION,
+        }
+
+    async def create_audit_report(
+        self, parent_page_id: str, audit_result: Dict[str, Any]
+    ) -> str:
+        """
+        Create a full audit report page in Notion.
+
+        Returns the URL of the created page.
+        """
+        findings = audit_result.get("findings", [])
+        quantum = audit_result.get("quantum_analysis", {})
+        repo_url = audit_result.get("repo_url", "Unknown")
+        timestamp = audit_result.get("completed_at", datetime.utcnow()).strftime("%Y-%m-%d %H:%M UTC")
+
+        # Count severities
+        critical = sum(1 for f in findings if f.get("severity") == "CRITICAL")
+        high = sum(1 for f in findings if f.get("severity") == "HIGH")
+        medium = sum(1 for f in findings if f.get("severity") == "MEDIUM")
+
+        page_title = f"PQC Audit — {repo_url.split('/')[-1]} — {timestamp}"
+
+        blocks = [
+            self._heading1("🔐 Quantum-Safe Code Audit Report"),
+            self._callout(
+                f"Quantum Risk: {quantum.get('threat_label', 'Unknown')}",
+                icon="⚛️",
+                color=self._severity_color(quantum.get("threat_score", 0))
+            ),
+            self._divider(),
+
+            # Overview section
+            self._heading2("📊 Executive Summary"),
+            self._table_of_contents(),
+            self._paragraph(f"**Repository**: [{repo_url}]({repo_url})"),
+            self._paragraph(f"**Audit Date**: {timestamp}"),
+            self._paragraph(f"**Files Scanned**: {audit_result.get('files_scanned', 0)}"),
+            self._paragraph(f"**Total Findings**: {len(findings)}"),
+            self._bulleted_list([
+                f"🔴 CRITICAL: {critical}",
+                f"🟠 HIGH: {high}",
+                f"🟡 MEDIUM: {medium}",
+            ]),
+
+            self._divider(),
+
+            # Quantum threat section
+            self._heading2("⚛️ Quantum Threat Analysis"),
+            self._paragraph(
+                "The following findings were analyzed using a Variational Quantum Eigensolver (VQE) "
+                "simulation to assess real-world quantum attack feasibility."
+            ),
+            self._paragraph(f"**Quantum Readiness Score**: {quantum.get('quantum_readiness_score', 0)}/100"),
+            self._paragraph(f"**Migration Urgency**: {quantum.get('recommended_migration_urgency', 'Unknown')}"),
+            self._paragraph(f"**Harvest-Now-Decrypt-Later Risk**: {'⚠️ YES' if quantum.get('harvest_now_decrypt_later_risk') else '✅ No'}"),
+
+            self._divider(),
+            self._heading2("🔍 Vulnerability Findings"),
+        ]
+
+        # Add each finding
+        severity_order = ["CRITICAL", "HIGH", "MEDIUM", "LOW"]
+        sorted_findings = sorted(findings, key=lambda f: severity_order.index(f.get("severity", "LOW")))
+
+        for i, finding in enumerate(sorted_findings, 1):
+            blocks.extend(self._finding_block(i, finding))
+
+        # NIST Standards section
+        blocks += [
+            self._divider(),
+            self._heading2("📚 Applicable NIST PQC Standards"),
+            self._paragraph(
+                "NIST finalized its first set of Post-Quantum Cryptography standards in 2024:"
+            ),
+            self._bulleted_list([
+                "**FIPS 203** (ML-KEM / CRYSTALS-Kyber) — Key encapsulation mechanism",
+                "**FIPS 204** (ML-DSA / CRYSTALS-Dilithium) — Digital signature algorithm",
+                "**FIPS 205** (SLH-DSA / SPHINCS+) — Hash-based digital signatures",
+            ]),
+
+            self._divider(),
+            self._heading2("🗺️ Migration Roadmap"),
+            self._numbered_list([
+                "**Inventory** — Use this report to identify all non-PQC cryptography in use",
+                "**Prioritize** — Address CRITICAL findings first (RSA, ECDSA, DH key exchange)",
+                "**Pilot** — Implement PQC in one low-risk service using liboqs or BouncyCastle",
+                "**Hybrid Mode** — Run classical + PQC in parallel during transition",
+                "**Full Migration** — Replace all identified vulnerabilities",
+                "**Verify** — Re-run this audit to confirm remediation",
+            ]),
+
+            self._paragraph(
+                "*Report generated by Quantum-Safe Code Auditor — "
+                "https://github.com/your-org/quantum-safe-auditor*"
+            ),
+        ]
+
+        # Create the page
+        async with httpx.AsyncClient(headers=self.headers, timeout=30) as client:
+            payload = {
+                "parent": {"page_id": parent_page_id},
+                "properties": {
+                    "title": {
+                        "title": [{"type": "text", "text": {"content": page_title}}]
+                    }
+                },
+                "children": blocks[:100],  # Notion API limit per request
+            }
+
+            resp = await client.post(f"{NOTION_API}/pages", json=payload)
+
+            if resp.status_code != 200:
+                logger.error(f"Notion API error: {resp.status_code} {resp.text[:300]}")
+                return ""
+
+            page_data = resp.json()
+            page_id = page_data["id"]
+            page_url = page_data.get("url", f"https://notion.so/{page_id.replace('-', '')}")
+
+            # Append remaining blocks if needed
+            if len(blocks) > 100:
+                await self._append_blocks(client, page_id, blocks[100:])
+
+            return page_url
+
+    async def _append_blocks(self, client, page_id: str, blocks: List[Dict]):
+        """Append additional blocks to a page (handles >100 block limit)."""
+        for batch in self._batch(blocks, 100):
+            await client.patch(
+                f"{NOTION_API}/blocks/{page_id}/children",
+                json={"children": batch}
+            )
+
+    # ── Block Builders ───────────────────────────────────────────────────────
+
+    def _heading1(self, text: str) -> Dict:
+        return {"object": "block", "type": "heading_1",
+                "heading_1": {"rich_text": [{"type": "text", "text": {"content": text}}]}}
+
+    def _heading2(self, text: str) -> Dict:
+        return {"object": "block", "type": "heading_2",
+                "heading_2": {"rich_text": [{"type": "text", "text": {"content": text}}]}}
+
+    def _heading3(self, text: str) -> Dict:
+        return {"object": "block", "type": "heading_3",
+                "heading_3": {"rich_text": [{"type": "text", "text": {"content": text}}]}}
+
+    def _paragraph(self, text: str) -> Dict:
+        return {"object": "block", "type": "paragraph",
+                "paragraph": {"rich_text": [{"type": "text", "text": {"content": text}}]}}
+
+    def _divider(self) -> Dict:
+        return {"object": "block", "type": "divider", "divider": {}}
+
+    def _table_of_contents(self) -> Dict:
+        return {"object": "block", "type": "table_of_contents", "table_of_contents": {}}
+
+    def _callout(self, text: str, icon: str = "💡", color: str = "gray_background") -> Dict:
+        return {
+            "object": "block",
+            "type": "callout",
+            "callout": {
+                "rich_text": [{"type": "text", "text": {"content": text}}],
+                "icon": {"type": "emoji", "emoji": icon},
+                "color": color,
+            }
+        }
+
+    def _bulleted_list(self, items: List[str]) -> List[Dict]:
+        return [
+            {"object": "block", "type": "bulleted_list_item",
+             "bulleted_list_item": {"rich_text": [{"type": "text", "text": {"content": item}}]}}
+            for item in items
+        ]
+
+    def _numbered_list(self, items: List[str]) -> List[Dict]:
+        return [
+            {"object": "block", "type": "numbered_list_item",
+             "numbered_list_item": {"rich_text": [{"type": "text", "text": {"content": item}}]}}
+            for item in items
+        ]
+
+    def _code_block(self, code: str, language: str = "plain text") -> Dict:
+        return {
+            "object": "block",
+            "type": "code",
+            "code": {
+                "rich_text": [{"type": "text", "text": {"content": code[:2000]}}],
+                "language": language,
+            }
+        }
+
+    def _finding_block(self, index: int, finding: Dict) -> List[Dict]:
+        """Build blocks for a single finding."""
+        severity_emoji = {
+            "CRITICAL": "🔴", "HIGH": "🟠", "MEDIUM": "🟡", "LOW": "🟢"
+        }.get(finding.get("severity", "LOW"), "⚪")
+
+        blocks = [
+            self._heading3(
+                f"{severity_emoji} Finding #{index}: {finding.get('algorithm')} "
+                f"in {finding.get('file_path', 'unknown')}:{finding.get('line_number', 0)}"
+            ),
+            self._paragraph(f"**Severity**: {finding.get('severity')}  |  "
+                            f"**Confidence**: {finding.get('confidence', 0):.0%}"),
+            self._paragraph(f"**Context**: {finding.get('context', 'N/A')}"),
+            self._paragraph(f"**Quantum Threat**: {finding.get('quantum_threat', 'N/A')}"),
+            self._code_block(finding.get("code_snippet", ""), "plain text"),
+            self._paragraph(f"**Recommended Replacement**: {finding.get('pqc_replacement', 'N/A')}"),
+            self._paragraph(f"**NIST Standard**: {finding.get('nist_standard', 'N/A')}"),
+        ]
+
+        remediation = finding.get("remediation_steps", [])
+        if remediation:
+            blocks.append(self._paragraph("**Remediation Steps**:"))
+            blocks.extend(self._numbered_list(remediation))
+
+        return blocks
+
+    def _severity_color(self, score: float) -> str:
+        if score >= 8:
+            return "red_background"
+        elif score >= 6:
+            return "orange_background"
+        elif score >= 3:
+            return "yellow_background"
+        return "green_background"
+
+    @staticmethod
+    def _batch(lst, size):
+        for i in range(0, len(lst), size):
+            yield lst[i:i + size]

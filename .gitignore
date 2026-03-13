@@ -1,0 +1,105 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+parts/
+var/
+sdist/
+develop-eggs/
+.installed.cfg
+lib/
+lib64/
+wheels/
+
+# Virtual environments
+.env
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Environment variables / secrets
+.env.local
+.env.*.local
+*.env
+secrets.json
+config.local.py
+
+# API keys (never commit these)
+anthropic_key.txt
+github_token.txt
+notion_token.txt
+*.key
+*.pem
+*.p12
+*.pfx
+
+# Evaluation / labeling data (may contain sensitive repo content)
+evaluation/labeling_sample_HandLabeled.csv
+evaluation/labeling_sample.csv
+evaluation/bc_java_spot_check.csv
+evaluation/bc_java_spot_check_HandLabeled.csv
+evaluation/results_*.json
+evaluation/findings_full.csv
+evaluation/ground_truth*.csv
+evaluation/metrics.json
+
+# Scanner output
+outputs/
+results/
+*.findings.json
+*.findings.csv
+scan_results/
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+
+# LaTeX (paper build artifacts)
+*.aux
+*.bbl
+*.blg
+*.log
+*.out
+*.synctex.gz
+*.toc
+*.fls
+*.fdb_latexmk
+*.nav
+*.snm
+docs/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Qiskit / quantum
+*.qasm
+qiskit_cache/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# Coverage / testing
+.coverage
+htmlcov/
+.pytest_cache/
+.tox/

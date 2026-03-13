@@ -1,0 +1,199 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 620" width="900" height="620" font-family="Georgia, 'Times New Roman', serif">
+
+  <!-- Background -->
+  <rect width="900" height="620" fill="#f8f9fa" rx="8"/>
+
+  <!-- Title -->
+  <text x="450" y="36" text-anchor="middle" font-size="15" font-weight="bold" fill="#1a1a2e">Fig. 1: Quantum Threat Model — Cryptographic Vulnerability Landscape and Temporal Risk</text>
+
+  <!-- ============================================================ -->
+  <!-- LEFT PANEL: QUANTUM ALGORITHMS -->
+  <!-- ============================================================ -->
+  <rect x="20" y="55" width="220" height="365" fill="#1a1a2e" rx="8"/>
+  <text x="130" y="80" text-anchor="middle" font-size="12" font-weight="bold" fill="#ffffff">QUANTUM ALGORITHMS</text>
+  <line x1="40" y1="88" x2="220" y2="88" stroke="#4a9eff" stroke-width="1"/>
+
+  <!-- Shor box -->
+  <rect x="35" y="100" width="190" height="135" fill="#0d2137" rx="6" stroke="#4a9eff" stroke-width="1.5"/>
+  <text x="130" y="120" text-anchor="middle" font-size="13" font-weight="bold" fill="#4a9eff">Shor's Algorithm</text>
+  <text x="130" y="134" text-anchor="middle" font-size="9.5" fill="#aac8e8">Shor, FOCS 1994</text>
+  <line x1="50" y1="140" x2="210" y2="140" stroke="#4a9eff" stroke-width="0.5" stroke-dasharray="3,3"/>
+  <text x="130" y="157" text-anchor="middle" font-size="10" fill="#e0f0ff">Breaks: integer factorization</text>
+  <text x="130" y="172" text-anchor="middle" font-size="10" fill="#e0f0ff">and discrete logarithms</text>
+  <text x="130" y="192" text-anchor="middle" font-size="10.5" fill="#ffcc44">Poly-time: exponential → O(n³)</text>
+  <text x="130" y="210" text-anchor="middle" font-size="9.5" fill="#aac8e8">~4,096 logical qubits for RSA-2048</text>
+  <text x="130" y="225" text-anchor="middle" font-size="9" fill="#aac8e8">(Gidney &amp; Ekerå, 2021)</text>
+
+  <!-- Grover box -->
+  <rect x="35" y="248" width="190" height="130" fill="#0d2137" rx="6" stroke="#7ed4a0" stroke-width="1.5"/>
+  <text x="130" y="268" text-anchor="middle" font-size="13" font-weight="bold" fill="#7ed4a0">Grover's Algorithm</text>
+  <text x="130" y="282" text-anchor="middle" font-size="9.5" fill="#aac8e8">Grover, STOC 1996</text>
+  <line x1="50" y1="288" x2="210" y2="288" stroke="#7ed4a0" stroke-width="0.5" stroke-dasharray="3,3"/>
+  <text x="130" y="305" text-anchor="middle" font-size="10" fill="#e0f0ff">Weakens: symmetric ciphers</text>
+  <text x="130" y="320" text-anchor="middle" font-size="10" fill="#e0f0ff">and hash functions</text>
+  <text x="130" y="340" text-anchor="middle" font-size="10.5" fill="#ffcc44">Quadratic speedup: O(N) → O(√N)</text>
+  <text x="130" y="358" text-anchor="middle" font-size="9.5" fill="#aac8e8">Effective key strength halved</text>
+
+  <!-- Label -->
+  <text x="130" y="400" text-anchor="middle" font-size="9.5" fill="#888" font-style="italic">Requires CRQC:</text>
+  <text x="130" y="413" text-anchor="middle" font-size="9.5" fill="#888" font-style="italic">est. 2030–2035</text>
+
+  <!-- ============================================================ -->
+  <!-- CENTER ARROWS -->
+  <!-- ============================================================ -->
+
+  <!-- Shor arrow -->
+  <defs>
+    <marker id="arrowBlue" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#4a9eff"/>
+    </marker>
+    <marker id="arrowGreen" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#7ed4a0"/>
+    </marker>
+    <marker id="arrowRed" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#ff6b6b"/>
+    </marker>
+    <marker id="arrowOrange" markerWidth="8" markerHeight="8" refX="6" refY="3" orient="auto">
+      <path d="M0,0 L0,6 L8,3 z" fill="#ff9944"/>
+    </marker>
+  </defs>
+  <line x1="225" y1="167" x2="310" y2="167" stroke="#4a9eff" stroke-width="2" marker-end="url(#arrowBlue)"/>
+  <text x="268" y="160" text-anchor="middle" font-size="9" fill="#4a9eff">BREAKS</text>
+
+  <!-- Grover arrow -->
+  <line x1="225" y1="313" x2="310" y2="313" stroke="#7ed4a0" stroke-width="2" marker-end="url(#arrowGreen)"/>
+  <text x="268" y="306" text-anchor="middle" font-size="9" fill="#7ed4a0">WEAKENS</text>
+
+  <!-- ============================================================ -->
+  <!-- CENTER PANEL: VULNERABLE ALGORITHMS -->
+  <!-- ============================================================ -->
+  <rect x="310" y="55" width="230" height="365" fill="#ffffff" rx="8" stroke="#dce0e8" stroke-width="1.5"/>
+  <text x="425" y="80" text-anchor="middle" font-size="12" font-weight="bold" fill="#1a1a2e">VULNERABLE ALGORITHMS</text>
+  <line x1="330" y1="88" x2="530" y2="88" stroke="#dce0e8" stroke-width="1"/>
+
+  <!-- Shor-breakable -->
+  <rect x="325" y="98" width="200" height="165" fill="#fff5f5" rx="5" stroke="#ff6b6b" stroke-width="1"/>
+  <text x="425" y="116" text-anchor="middle" font-size="10.5" font-weight="bold" fill="#cc2222">Shor-Breakable (Full Break)</text>
+  <text x="425" y="132" text-anchor="middle" font-size="9.5" fill="#888">Asymmetric / Key Exchange</text>
+
+  <circle cx="342" cy="149" r="3" fill="#ff6b6b"/>
+  <text x="352" y="153" font-size="10" fill="#333">RSA (all key sizes)</text>
+  <circle cx="342" cy="165" r="3" fill="#ff6b6b"/>
+  <text x="352" y="169" font-size="10" fill="#333">ECDSA / ECDH</text>
+  <circle cx="342" cy="181" r="3" fill="#ff6b6b"/>
+  <text x="352" y="185" font-size="10" fill="#333">DSA</text>
+  <circle cx="342" cy="197" r="3" fill="#ff6b6b"/>
+  <text x="352" y="201" font-size="10" fill="#333">Diffie-Hellman (DH)</text>
+  <circle cx="342" cy="213" r="3" fill="#ff6b6b"/>
+  <text x="352" y="217" font-size="10" fill="#333">X25519 / Ed25519</text>
+  <circle cx="342" cy="229" r="3" fill="#ff6b6b"/>
+  <text x="352" y="233" font-size="10" fill="#333">PKCS#1 v1.5</text>
+  <text x="425" y="252" text-anchor="middle" font-size="8.5" fill="#cc2222" font-style="italic">→ Complete key recovery possible</text>
+
+  <!-- Grover-weakened -->
+  <rect x="325" y="275" width="200" height="130" fill="#f5fff8" rx="5" stroke="#7ed4a0" stroke-width="1"/>
+  <text x="425" y="293" text-anchor="middle" font-size="10.5" font-weight="bold" fill="#1a7a3a">Grover-Weakened (Partial)</text>
+  <text x="425" y="308" text-anchor="middle" font-size="9.5" fill="#888">Symmetric / Hash</text>
+
+  <circle cx="342" cy="325" r="3" fill="#7ed4a0"/>
+  <text x="352" y="329" font-size="10" fill="#333">AES-128 → effectively 64-bit</text>
+  <circle cx="342" cy="341" r="3" fill="#7ed4a0"/>
+  <text x="352" y="345" font-size="10" fill="#333">3DES → critically weakened</text>
+  <circle cx="342" cy="357" r="3" fill="#7ed4a0"/>
+  <text x="352" y="361" font-size="10" fill="#333">MD5, SHA-1 → collision risk ↑</text>
+  <circle cx="342" cy="373" r="3" fill="#7ed4a0"/>
+  <text x="352" y="377" font-size="10" fill="#333">RC4 → already broken</text>
+  <text x="425" y="396" text-anchor="middle" font-size="8.5" fill="#1a7a3a" font-style="italic">→ Key doubling mitigates (AES-256 safe)</text>
+
+  <!-- Arrow to right panel -->
+  <line x1="540" y1="240" x2="610" y2="240" stroke="#ff9944" stroke-width="2" marker-end="url(#arrowOrange)"/>
+  <text x="575" y="233" text-anchor="middle" font-size="9" fill="#ff9944">DETECTED</text>
+  <text x="575" y="246" text-anchor="middle" font-size="9" fill="#ff9944">BY TOOL</text>
+
+  <!-- ============================================================ -->
+  <!-- RIGHT PANEL: OUR TOOL RESPONSE -->
+  <!-- ============================================================ -->
+  <rect x="620" y="55" width="265" height="365" fill="#1a1a2e" rx="8"/>
+  <text x="752" y="80" text-anchor="middle" font-size="12" font-weight="bold" fill="#ffffff">TOOL RESPONSE</text>
+  <line x1="640" y1="88" x2="865" y2="88" stroke="#ff9944" stroke-width="1"/>
+
+  <!-- Stage 1 -->
+  <rect x="635" y="98" width="235" height="58" fill="#0d2137" rx="5" stroke="#ff9944" stroke-width="1"/>
+  <text x="640" y="115" font-size="10" font-weight="bold" fill="#ff9944">Stage 1 — Regex Scanner</text>
+  <text x="640" y="130" font-size="9.5" fill="#ccd6e0">15 algorithm pattern classes</text>
+  <text x="640" y="144" font-size="9.5" fill="#ccd6e0">Confidence: 0.5 (regex-only fallback)</text>
+
+  <!-- Stage 2 -->
+  <rect x="635" y="165" width="235" height="58" fill="#0d2137" rx="5" stroke="#ff9944" stroke-width="1"/>
+  <text x="640" y="182" font-size="10" font-weight="bold" fill="#ff9944">Stage 2 — LLM Enrichment</text>
+  <text x="640" y="197" font-size="9.5" fill="#ccd6e0">Claude API: context, language, severity</text>
+  <text x="640" y="211" font-size="9.5" fill="#ccd6e0">Test vs production classification</text>
+
+  <!-- Stage 3 -->
+  <rect x="635" y="232" width="235" height="58" fill="#0d2137" rx="5" stroke="#ff9944" stroke-width="1"/>
+  <text x="640" y="249" font-size="10" font-weight="bold" fill="#ff9944">Stage 3 — VQE Threat Scoring</text>
+  <text x="640" y="264" font-size="9.5" fill="#ccd6e0">Qiskit 2.x qubit-weighted scoring</text>
+  <text x="640" y="278" font-size="9.5" fill="#ccd6e0">Shor path ≫ Grover path (severity)</text>
+
+  <!-- Stage 4 -->
+  <rect x="635" y="299" width="235" height="58" fill="#0d2137" rx="5" stroke="#ff9944" stroke-width="1"/>
+  <text x="640" y="316" font-size="10" font-weight="bold" fill="#ff9944">Stage 4 — Remediation Report</text>
+  <text x="640" y="331" font-size="9.5" fill="#ccd6e0">NIST FIPS 203/204/205 migration path</text>
+  <text x="640" y="345" font-size="9.5" fill="#ccd6e0">GitHub + Notion MCP integration</text>
+
+  <!-- Vertical connector lines between stages -->
+  <line x1="752" y1="156" x2="752" y2="165" stroke="#ff9944" stroke-width="1.5" stroke-dasharray="3,2"/>
+  <line x1="752" y1="223" x2="752" y2="232" stroke="#ff9944" stroke-width="1.5" stroke-dasharray="3,2"/>
+  <line x1="752" y1="290" x2="752" y2="299" stroke="#ff9944" stroke-width="1.5" stroke-dasharray="3,2"/>
+
+  <!-- ============================================================ -->
+  <!-- BOTTOM PANEL: HNDL TIMELINE -->
+  <!-- ============================================================ -->
+  <rect x="20" y="435" width="865" height="165" fill="#0d2137" rx="8" stroke="#4a9eff" stroke-width="1"/>
+  <text x="452" y="456" text-anchor="middle" font-size="12" font-weight="bold" fill="#ffffff">HARVEST-NOW DECRYPT-LATER (HNDL) — TEMPORAL THREAT MODEL</text>
+  <line x1="40" y1="463" x2="865" y2="463" stroke="#4a9eff" stroke-width="0.5" stroke-dasharray="4,4"/>
+
+  <!-- Timeline line -->
+  <line x1="60" y1="510" x2="860" y2="510" stroke="#aac8e8" stroke-width="2"/>
+  <polygon points="860,505 875,510 860,515" fill="#aac8e8"/>
+
+  <!-- Timeline markers -->
+  <!-- 2022 -->
+  <line x1="100" y1="504" x2="100" y2="516" stroke="#aac8e8" stroke-width="1.5"/>
+  <text x="100" y="530" text-anchor="middle" font-size="10" fill="#aac8e8">2022</text>
+  <text x="100" y="545" text-anchor="middle" font-size="9" fill="#888">CNSA 2.0</text>
+  <text x="100" y="557" text-anchor="middle" font-size="9" fill="#888">announced</text>
+
+  <!-- 2024 -->
+  <line x1="260" y1="504" x2="260" y2="516" stroke="#7ed4a0" stroke-width="1.5"/>
+  <text x="260" y="530" text-anchor="middle" font-size="10" fill="#7ed4a0">Aug 2024</text>
+  <text x="260" y="545" text-anchor="middle" font-size="9" fill="#7ed4a0">FIPS 203/204/205</text>
+  <text x="260" y="557" text-anchor="middle" font-size="9" fill="#7ed4a0">published</text>
+
+  <!-- 2026 (now) -->
+  <line x1="400" y1="490" x2="400" y2="516" stroke="#ffcc44" stroke-width="2"/>
+  <text x="400" y="530" text-anchor="middle" font-size="10" fill="#ffcc44" font-weight="bold">2026</text>
+  <text x="400" y="545" text-anchor="middle" font-size="9" fill="#ffcc44">TODAY</text>
+  <text x="400" y="557" text-anchor="middle" font-size="9" fill="#ffcc44">Migration window open</text>
+  <rect x="388" y="486" width="24" height="6" fill="#ffcc44" rx="2"/>
+
+  <!-- 2030 -->
+  <line x1="620" y1="504" x2="620" y2="516" stroke="#ff9944" stroke-width="1.5"/>
+  <text x="620" y="530" text-anchor="middle" font-size="10" fill="#ff9944">2030</text>
+  <text x="620" y="545" text-anchor="middle" font-size="9" fill="#ff9944">CNSA 2.0</text>
+  <text x="620" y="557" text-anchor="middle" font-size="9" fill="#ff9944">compliance deadline</text>
+
+  <!-- 2030-2035 -->
+  <line x1="800" y1="504" x2="800" y2="516" stroke="#ff6b6b" stroke-width="1.5"/>
+  <text x="800" y="530" text-anchor="middle" font-size="10" fill="#ff6b6b">2030–2035</text>
+  <text x="800" y="545" text-anchor="middle" font-size="9" fill="#ff6b6b">CRQC estimated</text>
+  <text x="800" y="557" text-anchor="middle" font-size="9" fill="#ff6b6b">operational</text>
+
+  <!-- HNDL arc label -->
+  <path d="M 100 490 Q 450 460 800 490" stroke="#ff6b6b" stroke-width="1.5" fill="none" stroke-dasharray="6,3"/>
+  <text x="452" y="474" text-anchor="middle" font-size="10" fill="#ff6b6b" font-style="italic">Adversaries harvest encrypted traffic NOW → decrypt at CRQC availability</text>
+
+  <!-- Source note -->
+  <text x="452" y="590" text-anchor="middle" font-size="9" fill="#666" font-style="italic">CRQC = Cryptographically Relevant Quantum Computer. Qubit estimates: RSA-2048 ~4,096 logical qubits (Gidney &amp; Ekerå, 2021); P-256 ~2,330 (Roetteler et al., 2017).</text>
+
+</svg>
