@@ -4,13 +4,13 @@
 
 ## What You Need
 
-| Requirement                            | Where to get it              | Required?          |
-| -------------------------------------- | ---------------------------- | ------------------ |
-| **Python 3.11+**                 | python.org                   | Yes                |
-| **Anthropic API Key**            | console.anthropic.com        | Yes                |
-| **GitHub Personal Access Token** | github.com/settings/tokens   | Yes                |
-| **Notion Integration Token**     | notion.so/my-integrations    | Optional           |
-| **Conda or venv**                | Anaconda / built into Python | Yes (one or other) |
+| Requirement | Where to get it | Required? |
+|---|---|---|
+| **Python 3.11+** | python.org | Yes |
+| **Anthropic API Key** | console.anthropic.com | Yes |
+| **GitHub Personal Access Token** | github.com/settings/tokens | Yes |
+| **Notion Integration Token** | notion.so/my-integrations | Optional |
+| **Conda or venv** | Anaconda / built into Python | Yes (one or other) |
 
 **Minimum viable setup**: Anthropic API key + GitHub token. That gets you scanning, VQE simulation, and GitHub issue creation. Notion is optional.
 
@@ -31,7 +31,7 @@ You need 3.11 or higher.
 Clone from GitHub:
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/quantum-safe-auditor.git
+git clone https://github.com/AnimeshShaw/quantum-safe-auditor.git
 cd quantum-safe-auditor
 ```
 
@@ -172,13 +172,13 @@ NOTION_PAGE_ID=YOUR-32-CHAR-ID
 
 **Per-repo recommended settings:**
 
-| Repo              | EXCLUDE_PATHS        | MAX_FILES          |
-| ----------------- | -------------------- | ------------------ |
-| python-rsa        | `tests/`           | 0 (16 files total) |
-| python-ecdsa      | `docs/`            | 0                  |
-| python-jose       | `tests/,docs/`     | 0                  |
-| node-jsonwebtoken | `test/`            | 0                  |
-| bc-java           | `/test/,src/test/` | 300                |
+| Repo | EXCLUDE_PATHS | MAX_FILES |
+|---|---|---|
+| python-rsa | `tests/` | 0 (16 files total) |
+| python-ecdsa | `docs/` | 0 |
+| python-jose | `tests/,docs/` | 0 |
+| node-jsonwebtoken | `test/` | 0 |
+| bc-java | `/test/,src/test/` | 300 |
 
 ---
 
@@ -234,13 +234,13 @@ No API keys needed — all calls are mocked.
 
 All 5 repos have been scanned. Total: 5,775 findings across 5 repos.
 
-| Repo              | Findings | VQE Threat Score |
-| ----------------- | -------- | ---------------- |
-| bc-java           | 5,247    | 4.20             |
-| python-ecdsa      | 325      | 3.54             |
-| python-rsa        | 120      | 6.53             |
-| python-jose       | 75       | 5.49             |
-| node-jsonwebtoken | 8        | 7.00             |
+| Repo | Findings | VQE Threat Score |
+|---|---|---|
+| bc-java | 5,247 | 4.20 |
+| python-ecdsa | 325 | 3.54 |
+| python-rsa | 120 | 6.53 |
+| python-jose | 75 | 5.49 |
+| node-jsonwebtoken | 8 | 7.00 |
 
 **Evaluation results**: P=71.98%, R=100%, F1=83.71% (n=602 labeled findings).
 
@@ -256,13 +256,12 @@ python evaluation/sample_for_labeling.py
 
 This creates two files:
 
-| File                                  | Rows | Purpose                     |
-| ------------------------------------- | ---- | --------------------------- |
-| `evaluation/bc_java_spot_check.csv` | 50   | Validates bc-java TP rate   |
-| `evaluation/labeling_sample.csv`    | ~530 | Main labeling set for paper |
+| File | Rows | Purpose |
+|---|---|---|
+| `evaluation/bc_java_spot_check.csv` | 50 | Validates bc-java TP rate |
+| `evaluation/labeling_sample.csv` | ~530 | Main labeling set for paper |
 
 Both files have an `enrichment_source` column:
-
 - `AI-enriched` — Claude analyzed the file. Low FP rate.
 - `Regex-only` — Claude never saw this file (rate limit during bc-java scan). Be more skeptical.
 
@@ -272,12 +271,12 @@ Both files have an `enrichment_source` column:
 
 Open in Excel. For each row, look at the `code_snippet` column. Set the `label` column to:
 
-| Label          | Meaning                                                             |
-| -------------- | ------------------------------------------------------------------- |
-| `TP`         | Real vulnerability in real security code                            |
-| `FP-Context` | Comment, string literal, error message, OID constant, dead code     |
-| `FP-Test`    | Test code the tool missed classifying                               |
-| `FP-Safe`    | Algorithm used in a non-security context (e.g. MD5 for a cache key) |
+| Label | Meaning |
+|---|---|
+| `TP` | Real vulnerability in real security code |
+| `FP-Context` | Comment, string literal, error message, OID constant, dead code |
+| `FP-Test` | Test code the tool missed classifying |
+| `FP-Safe` | Algorithm used in a non-security context (e.g. MD5 for a cache key) |
 
 **bc-java patterns that are always FP-Context:**
 
@@ -295,7 +294,6 @@ If 45+ out of 50 rows are TP, you can bulk-label all bc-java findings as TP in t
 ### Step 3 — Label labeling_sample.csv
 
 Same process. This file has:
-
 - All non-bc-java findings
 - ~70 stratified bc-java rows for coverage
 
@@ -317,7 +315,6 @@ python evaluation/evaluate.py \
 ```
 
 The output contains:
-
 - Overall precision, recall, F1
 - FP breakdown: FP-Context, FP-Safe, FP-Test (separately)
 - Per-algorithm precision/recall/F1
@@ -330,14 +327,14 @@ The output contains:
 
 The AI-enriched vs Regex-only split is the paper's core quality claim:
 
-| Tier        | What it means                                   |
-| ----------- | ----------------------------------------------- |
-| AI-enriched | Claude analyzed the file — lower FP rate       |
-| Regex-only  | Claude fell back (rate limit) — higher FP rate |
+| Tier | What it means |
+|---|---|
+| AI-enriched | Claude analyzed the file — lower FP rate |
+| Regex-only | Claude fell back (rate limit) — higher FP rate |
 
-**Important caveat on the two-tier comparison**: All 188 FP-Test findings fell into the AI-enriched tier (python-ecdsa test fixtures not filtered by `EXCLUDE_PATHS`). This makes AI-enriched appear *artificially lower.* Excluding FP-Test from both denominators gives the fair comparison. 
+**Important caveat on the two-tier comparison**: All 188 FP-Test findings fell into the AI-enriched tier (python-ecdsa test fixtures not filtered by `EXCLUDE_PATHS`). This makes AI-enriched appear artificially lower. Excluding FP-Test from both denominators gives the fair comparison. Report both in any paper.
 
-**Important caveat on the overall metrics**: Metrics are computed over a stratified sample of 602 findings (10.4% of the full corpus). Full-corpus labeling is reserved for Follow up research work with larger.
+**Important caveat on the overall metrics**: Metrics are computed over a stratified sample of 602 findings (10.4% of the full corpus). Full-corpus labeling is planned for future evaluations.
 
 ---
 
@@ -346,7 +343,6 @@ The AI-enriched vs Regex-only split is the paper's core quality claim:
 ### ModuleNotFoundError: No module named 'agent'
 
 You are in the wrong directory or missing the `-m` flag.
-
 ```bash
 cd qsa
 python -m agent.orchestrator

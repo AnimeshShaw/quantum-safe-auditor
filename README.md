@@ -1,6 +1,6 @@
 # 🔐 Quantum-Safe Code Auditor
 
-> **An agentic AI pipeline that scans codebases for quantum-vulnerable cryptography, eliminates false positives using Claude, ranks findings by quantum attack cost via VQE simulation, and generates actionable migration reports aligned to NIST FIPS 203/204/205.**
+> **An automated three-tier pipeline that scans codebases for quantum-vulnerable cryptography, eliminates false positives using LLM enrichment, ranks findings by quantum attack cost via VQE simulation, and generates actionable migration reports aligned to NIST FIPS 203/204/205.**
 
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://python.org)
 [![Powered by Claude](https://img.shields.io/badge/AI-Claude%20Sonnet%204.6-orange.svg)](https://anthropic.com)
@@ -44,41 +44,41 @@ Tool output includes one GitHub Issue per algorithm family with line-level refer
 
 Evaluated on 5 widely-used open-source repositories (18,160 ⭐ node-jsonwebtoken, 2,624 ⭐ bc-java, 1,743 ⭐ python-jose, 971 ⭐ python-ecdsa, 492 ⭐ python-rsa):
 
-| Metric                     | Value                   |
-| -------------------------- | ----------------------- |
-| **Precision**        | **71.98%**        |
-| **Recall**           | **100%**          |
-| **F1 Score**         | **83.71%**        |
-| Total Findings             | 5,775 across 5 repos    |
-| Labeled for Evaluation     | 602 (stratified sample) |
-| bc-java spot-check TP rate | 92% (46/50)             |
+| Metric | Value |
+|---|---|
+| **Precision** | **71.98%** |
+| **Recall** | **100%** |
+| **F1 Score** | **83.71%** |
+| Total Findings | 5,775 across 5 repos |
+| Labeled for Evaluation | 602 (stratified sample) |
+| bc-java spot-check TP rate | 92% (46/50) |
 
 > **Recall = 100%** means the tool found every true quantum-vulnerable instance in the labeled evaluation set — no false negatives.
 
 ### Per-Repository VQE Threat Scores
 
-| Repository        | Stars  | Language   | Files Scanned | Findings | VQE Threat Score      |
-| ----------------- | ------ | ---------- | ------------- | -------- | --------------------- |
-| node-jsonwebtoken | 18,160 | JavaScript | ~20           | 8        | **7.00 (HIGH)** |
-| python-rsa        | 492    | Python     | 16            | 120      | 6.53                  |
-| python-jose       | 1,743  | Python     | ~30           | 75       | 5.49                  |
-| bc-java           | 2,624  | Java       | 300 (sampled) | 5,247    | 4.20                  |
-| python-ecdsa      | 971    | Python     | ~40           | 325      | 3.54                  |
+| Repository | Stars | Language | Files Scanned | Findings | VQE Threat Score |
+|---|---|---|---|---|---|
+| node-jsonwebtoken | 18,160 | JavaScript | ~20 | 8 | **7.00 (HIGH)** |
+| python-rsa | 492 | Python | 16 | 120 | 6.53 |
+| python-jose | 1,743 | Python | ~30 | 75 | 5.49 |
+| bc-java | 2,624 | Java | 300 (sampled) | 5,247 | 4.20 |
+| python-ecdsa | 971 | Python | ~40 | 325 | 3.54 |
 
 > **Key insight:** bc-java has the most findings (5,247) but a lower threat score than node-jsonwebtoken (8 findings). Raw finding count is a poor proxy for quantum migration urgency — the VQE qubit-weighted score better reflects actual risk. Pearson r = −0.35 between finding density and threat score across repos.
 
 ### Per-Algorithm Precision
 
-| Algorithm                                  | Precision    | F1           | Notes                                                |
-| ------------------------------------------ | ------------ | ------------ | ---------------------------------------------------- |
-| AES-128, DH, DSA, PKCS#1v15, RC4, RSA-1024 | 1.000        | 1.000        | Perfect                                              |
-| X25519, Ed25519                            | 0.815–0.833 | 0.898–0.909 | Strong                                               |
-| MD5                                        | 0.800        | 0.889        | Strong                                               |
-| ECDSA                                      | 0.719        | 0.837        | Good                                                 |
-| RSA                                        | 0.705        | 0.827        | Good (comment-line FP in bc-java)                    |
-| 3DES                                       | 0.667        | 0.800        | Acceptable                                           |
-| ECDH, SHA-1                                | 0.458–0.533 | 0.629–0.696 | Lower (test fixture FP — resolved by EXCLUDE_PATHS) |
-| HARDCODED_KEY                              | 0.000        | 0.000        | All FP-Test; needs tighter context filter            |
+| Algorithm | Precision | F1 | Notes |
+|---|---|---|---|
+| AES-128, DH, DSA, PKCS#1v15, RC4, RSA-1024 | 1.000 | 1.000 | Perfect |
+| X25519, Ed25519 | 0.815–0.833 | 0.898–0.909 | Strong |
+| MD5 | 0.800 | 0.889 | Strong |
+| ECDSA | 0.719 | 0.837 | Good |
+| RSA | 0.705 | 0.827 | Good (comment-line FP in bc-java) |
+| 3DES | 0.667 | 0.800 | Acceptable |
+| ECDH, SHA-1 | 0.458–0.533 | 0.629–0.696 | Lower (test fixture FP — resolved by EXCLUDE_PATHS) |
+| HARDCODED_KEY | 0.000 | 0.000 | All FP-Test; needs tighter context filter |
 
 > **Note on FP-Test:** 188 of 414 FP findings are test fixture false positives from python-ecdsa, eliminated by setting `EXCLUDE_PATHS=tests/`. Reported separately for transparency. Excluding them yields adjusted precision of 74.1%.
 
@@ -86,40 +86,40 @@ Evaluated on 5 widely-used open-source repositories (18,160 ⭐ node-jsonwebtoke
 
 ## Features
 
-| Feature                              | Details                                                                                                           |
-| ------------------------------------ | ----------------------------------------------------------------------------------------------------------------- |
-| 🤖**Two-Pass AI Scanning**     | Regex sweep → Claude context analysis eliminates false positives                                                 |
-| 🔍**15 Algorithm Classes**     | RSA, ECDSA, ECDH, DSA, DH, Ed25519, X25519, PKCS#1 v1.5, RSA-1024, AES-128, MD5, SHA-1, RC4, 3DES, Hardcoded Keys |
-| 🌐**12 Languages**             | Python, JavaScript, TypeScript, Java, Go, Rust, C/C++, C#, Ruby, PHP, Swift, Kotlin                               |
-| ⚛️**VQE Quantum Simulation** | Real Qiskit 2.x circuits with qubit-weighted threat scoring                                                       |
-| 📋**Notion Reports**           | Rich structured audit pages via Notion API                                                                        |
-| 🐛**GitHub Issues**            | Automated issue creation per algorithm with remediation steps                                                     |
-| 🏷️**NIST Standard Mapping**  | Every finding mapped to FIPS 203 / 204 / 205 replacement                                                          |
-| 📊**Quantum Readiness Score**  | 0–100 score for executive reporting                                                                              |
-| 📁**Large Repo Sampling**      | MAX_FILES priority-weighted sampling for repos with thousands of files                                            |
-| 🔬**Evaluation Framework**     | Stratified precision/recall + Pearson correlation for research reproducibility                                    |
+| Feature | Details |
+|---|---|
+| 🤖 **Two-Pass AI Scanning** | Regex sweep → Claude context analysis eliminates false positives |
+| 🔍 **15 Algorithm Classes** | RSA, ECDSA, ECDH, DSA, DH, Ed25519, X25519, PKCS#1 v1.5, RSA-1024, AES-128, MD5, SHA-1, RC4, 3DES, Hardcoded Keys |
+| 🌐 **12 Languages** | Python, JavaScript, TypeScript, Java, Go, Rust, C/C++, C#, Ruby, PHP, Swift, Kotlin |
+| ⚛️ **VQE Quantum Simulation** | Real Qiskit 2.x circuits with qubit-weighted threat scoring |
+| 📋 **Notion Reports** | Rich structured audit pages via Notion API |
+| 🐛 **GitHub Issues** | Automated issue creation per algorithm with remediation steps |
+| 🏷️ **NIST Standard Mapping** | Every finding mapped to FIPS 203 / 204 / 205 replacement |
+| 📊 **Quantum Readiness Score** | 0–100 score for executive reporting |
+| 📁 **Large Repo Sampling** | MAX_FILES priority-weighted sampling for repos with thousands of files |
+| 🔬 **Evaluation Framework** | Stratified precision/recall + Pearson correlation for research reproducibility |
 
 ---
 
 ## Algorithms Detected
 
-| Algorithm       | Severity    | Quantum Attack            | PQC Replacement             | NIST Standard | CNSA 2.0 Deadline      |
-| --------------- | ----------- | ------------------------- | --------------------------- | ------------- | ---------------------- |
-| RSA             | 🔴 CRITICAL | Shor's                    | ML-KEM (CRYSTALS-Kyber)     | FIPS 203      | 2025 new / 2030 legacy |
-| RSA-1024        | 🔴 CRITICAL | Shor's                    | ML-KEM (CRYSTALS-Kyber)     | FIPS 203      | Immediate              |
-| ECDSA           | 🔴 CRITICAL | Shor's                    | ML-DSA (CRYSTALS-Dilithium) | FIPS 204      | 2025 new / 2030 legacy |
-| ECDH            | 🔴 CRITICAL | Shor's                    | ML-KEM (CRYSTALS-Kyber)     | FIPS 203      | 2026                   |
-| Ed25519 / EdDSA | 🔴 CRITICAL | Shor's                    | ML-DSA (CRYSTALS-Dilithium) | FIPS 204      | 2025 new               |
-| X25519 / X448   | 🔴 CRITICAL | Shor's                    | ML-KEM (CRYSTALS-Kyber)     | FIPS 203      | 2026                   |
-| DSA             | 🔴 CRITICAL | Shor's                    | ML-DSA / SLH-DSA            | FIPS 204/205  | 2025                   |
-| PKCS#1 v1.5     | 🔴 CRITICAL | Shor's                    | ML-KEM / OAEP interim       | FIPS 203      | 2025                   |
-| Diffie-Hellman  | 🟠 HIGH     | Shor's                    | ML-KEM (CRYSTALS-Kyber)     | FIPS 203      | 2026                   |
-| AES-128         | 🟠 HIGH     | Grover's                  | AES-256                     | SP 800-38     | 2030                   |
-| MD5             | 🟠 HIGH     | Grover's                  | SHA-3 / SHAKE256            | FIPS 202      | Already disallowed     |
-| SHA-1           | 🟠 HIGH     | Grover's                  | SHA-3-256                   | FIPS 202      | 2030                   |
-| RC4             | 🟠 HIGH     | Classical + Grover's      | AES-256-GCM                 | SP 800-175B   | Already prohibited     |
-| 3DES / DESede   | 🟠 HIGH     | Grover's                  | AES-256-GCM                 | SP 800-131A   | Already disallowed     |
-| Hardcoded Keys  | 🟠 HIGH     | Harvest-Now-Decrypt-Later | Secrets Manager             | SP 800-57     | Immediate              |
+| Algorithm | Severity | Quantum Attack | PQC Replacement | NIST Standard | CNSA 2.0 Deadline |
+|---|---|---|---|---|---|
+| RSA | 🔴 CRITICAL | Shor's | ML-KEM (CRYSTALS-Kyber) | FIPS 203 | 2025 new / 2030 legacy |
+| RSA-1024 | 🔴 CRITICAL | Shor's | ML-KEM (CRYSTALS-Kyber) | FIPS 203 | Immediate |
+| ECDSA | 🔴 CRITICAL | Shor's | ML-DSA (CRYSTALS-Dilithium) | FIPS 204 | 2025 new / 2030 legacy |
+| ECDH | 🔴 CRITICAL | Shor's | ML-KEM (CRYSTALS-Kyber) | FIPS 203 | 2026 |
+| Ed25519 / EdDSA | 🔴 CRITICAL | Shor's | ML-DSA (CRYSTALS-Dilithium) | FIPS 204 | 2025 new |
+| X25519 / X448 | 🔴 CRITICAL | Shor's | ML-KEM (CRYSTALS-Kyber) | FIPS 203 | 2026 |
+| DSA | 🔴 CRITICAL | Shor's | ML-DSA / SLH-DSA | FIPS 204/205 | 2025 |
+| PKCS#1 v1.5 | 🔴 CRITICAL | Shor's | ML-KEM / OAEP interim | FIPS 203 | 2025 |
+| Diffie-Hellman | 🟠 HIGH | Shor's | ML-KEM (CRYSTALS-Kyber) | FIPS 203 | 2026 |
+| AES-128 | 🟠 HIGH | Grover's | AES-256 | SP 800-38 | 2030 |
+| MD5 | 🟠 HIGH | Grover's | SHA-3 / SHAKE256 | FIPS 202 | Already disallowed |
+| SHA-1 | 🟠 HIGH | Grover's | SHA-3-256 | FIPS 202 | 2030 |
+| RC4 | 🟠 HIGH | Classical + Grover's | AES-256-GCM | SP 800-175B | Already prohibited |
+| 3DES / DESede | 🟠 HIGH | Grover's | AES-256-GCM | SP 800-131A | Already disallowed |
+| Hardcoded Keys | 🟠 HIGH | Harvest-Now-Decrypt-Later | Secrets Manager | SP 800-57 | Immediate |
 
 ---
 
@@ -127,8 +127,8 @@ Evaluated on 5 widely-used open-source repositories (18,160 ⭐ node-jsonwebtoke
 
 ```
 +------------------------------------------------------------------+
-|                  Quantum-Safe Auditor Agent                       |
-|                   (Claude Sonnet 4.6 Orchestrator)                |
+|                  Quantum-Safe Auditor Pipeline                    |
+|                   (Three-Tier Automated Analysis)                 |
 +------------------------------+-----------------------------------+
                                |
           +--------------------+--------------------+
@@ -170,9 +170,8 @@ Evaluated on 5 widely-used open-source repositories (18,160 ⭐ node-jsonwebtoke
 
 ```bash
 git clone https://github.com/AnimeshShaw/quantum-safe-auditor.git
-cd quantum-safe-auditor/
+cd quantum-safe-auditor/qsa
 conda activate quantum-safe-auditor
-pip install -r requirements.txt
 python -m agent.orchestrator
 ```
 
@@ -216,12 +215,12 @@ NOTION_PAGE_ID=your-32-char-page-id
 
 ### Recommended settings by repo type
 
-| Repo type                      | EXCLUDE_PATHS        | MAX_FILES |
-| ------------------------------ | -------------------- | --------- |
-| Python package                 | `tests/`           | 0         |
-| Node.js package                | `test/`            | 0         |
-| Maven/Gradle (Java)            | `/test/,src/test/` | 0         |
-| Large Java repo (e.g. bc-java) | `/test/,src/test/` | 300       |
+| Repo type | EXCLUDE_PATHS | MAX_FILES |
+|---|---|---|
+| Python package | `tests/` | 0 |
+| Node.js package | `test/` | 0 |
+| Maven/Gradle (Java) | `/test/,src/test/` | 0 |
+| Large Java repo (e.g. bc-java) | `/test/,src/test/` | 300 |
 
 ---
 
@@ -229,13 +228,13 @@ NOTION_PAGE_ID=your-32-char-page-id
 
 The threat score is computed from a real Qiskit 2.x variational quantum eigensolver (VQE) circuit. Each finding contributes a qubit-weighted score based on the estimated logical qubit cost of the corresponding quantum attack:
 
-| Algorithm                      | Logical Qubits (Shor's) | Score Branch              |
-| ------------------------------ | ----------------------- | ------------------------- |
-| RSA-2048                       | ~4,096                  | Qubit-weighted (Shor)     |
-| RSA-1024                       | ~2,048                  | Qubit-weighted (Shor)     |
-| ECDSA P-256 / Ed25519 / X25519 | ~2,330                  | Qubit-weighted (Shor)     |
-| MD5, SHA-1, AES-128, RC4, 3DES | N/A                     | Flat 0.4 penalty (Grover) |
-| HARDCODED_KEY                  | N/A                     | Flat 0.4 penalty (HNDL)   |
+| Algorithm | Logical Qubits (Shor's) | Score Branch |
+|---|---|---|
+| RSA-2048 | ~4,096 | Qubit-weighted (Shor) |
+| RSA-1024 | ~2,048 | Qubit-weighted (Shor) |
+| ECDSA P-256 / Ed25519 / X25519 | ~2,330 | Qubit-weighted (Shor) |
+| MD5, SHA-1, AES-128, RC4, 3DES | N/A | Flat 0.4 penalty (Grover) |
+| HARDCODED_KEY | N/A | Flat 0.4 penalty (HNDL) |
 
 Qiskit 2.x fully supported. Uses `StatevectorEstimator` + COBYLA. No `qiskit_algorithms` dependency (removed in Qiskit 2.x).
 
@@ -243,14 +242,14 @@ Qiskit 2.x fully supported. Uses `StatevectorEstimator` + COBYLA. No `qiskit_alg
 
 ## Evaluation Corpus
 
-| Repo              | Stars (Mar 2026) | Language   | Files         | Findings        | VQE Threat Score |
-| ----------------- | ---------------- | ---------- | ------------- | --------------- | ---------------- |
-| python-rsa        | 492              | Python     | 16            | 120             | 6.53             |
-| python-ecdsa      | 971              | Python     | ~40           | 325             | 3.54             |
-| python-jose       | 1,743            | Python     | ~30           | 75              | 5.49             |
-| node-jsonwebtoken | 18,160           | JavaScript | ~20           | 8               | 7.00             |
-| bc-java           | 2,624            | Java       | 300 (sampled) | 5,247           | 4.20             |
-| **Total**   |                  |            |               | **5,775** |                  |
+| Repo | Stars (Mar 2026) | Language | Files | Findings | VQE Threat Score |
+|---|---|---|---|---|---|
+| python-rsa | 492 | Python | 16 | 120 | 6.53 |
+| python-ecdsa | 971 | Python | ~40 | 325 | 3.54 |
+| python-jose | 1,743 | Python | ~30 | 75 | 5.49 |
+| node-jsonwebtoken | 18,160 | JavaScript | ~20 | 8 | 7.00 |
+| bc-java | 2,624 | Java | 300 (sampled) | 5,247 | 4.20 |
+| **Total** | | | | **5,775** | |
 
 > bc-java scanned with `MAX_FILES=300` using priority-weighted sampling (~180 crypto-relevant files + ~120 random).
 
@@ -320,8 +319,8 @@ If you use this tool or its evaluation corpus in research, please cite:
 ```bibtex
 @misc{shaw2026quantumsafe,
   author    = {Shaw, Animesh},
-  title     = {Quantum-Safe Code Auditor: An Agentic AI Pipeline for
-               Detecting and Prioritizing Quantum-Vulnerable Cryptography},
+  title     = {Quantum-Safe Code Auditor: An LLM-Augmented Static Analysis Tool
+               for Detecting and Prioritising Post-Quantum Cryptography Migration Risks},
   year      = {2026},
   publisher = {arXiv},
   note      = {arXiv preprint — DOI to be added upon submission},
@@ -333,17 +332,19 @@ If you use this tool or its evaluation corpus in research, please cite:
 
 ## PQC Migration Resources
 
-| Resource                 | Link                                                                                  |
-| ------------------------ | ------------------------------------------------------------------------------------- |
-| NIST PQC Project         | https://csrc.nist.gov/projects/post-quantum-cryptography                              |
-| FIPS 203 (ML-KEM)        | https://csrc.nist.gov/pubs/fips/203/final                                             |
-| FIPS 204 (ML-DSA)        | https://csrc.nist.gov/pubs/fips/204/final                                             |
-| FIPS 205 (SLH-DSA)       | https://csrc.nist.gov/pubs/fips/205/final                                             |
-| NSA CNSA 2.0             | https://media.defense.gov/2022/Sep/07/2003071834/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS_.PDF |
-| CISA PQC Migration Guide | https://www.cisa.gov/quantum                                                          |
+| Resource | Link |
+|---|---|
+| NIST PQC Project | https://csrc.nist.gov/projects/post-quantum-cryptography |
+| FIPS 203 (ML-KEM) | https://csrc.nist.gov/pubs/fips/203/final |
+| FIPS 204 (ML-DSA) | https://csrc.nist.gov/pubs/fips/204/final |
+| FIPS 205 (SLH-DSA) | https://csrc.nist.gov/pubs/fips/205/final |
+| NSA CNSA 2.0 | https://media.defense.gov/2022/Sep/07/2003071834/-1/-1/0/CSA_CNSA_2.0_ALGORITHMS_.PDF |
+| CISA PQC Migration Guide | https://www.cisa.gov/quantum |
 
 ---
 
 ## License
 
 MIT
+
+*Built by Animesh Shaw · Claude Sonnet 4.6 (Anthropic) · Qiskit 2.x · NIST FIPS 203/204/205*
