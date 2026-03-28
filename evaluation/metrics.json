@@ -1,0 +1,224 @@
+{
+  "overall": {
+    "TP": 298,
+    "FP_context": 110,
+    "FP_safe": 6,
+    "FP_test": 188,
+    "FP_test_note": "Excluded from precision denominator -- test fixtures not filtered via EXCLUDE_PATHS",
+    "FN": 0,
+    "precision": 0.7198,
+    "recall": 1.0,
+    "f1": 0.8371
+  },
+  "per_algorithm": {
+    "3DES": {
+      "TP": 4,
+      "FP_context": 2,
+      "FP_safe": 0,
+      "FP_test": 0,
+      "FP_test_note": "Excluded from precision denominator -- test fixtures not filtered via EXCLUDE_PATHS",
+      "FN": 0,
+      "precision": 0.6667,
+      "recall": 1.0,
+      "f1": 0.8
+    },
+    "AES-128": {
+      "TP": 3,
+      "FP_context": 0,
+      "FP_safe": 0,
+      "FP_test": 0,
+      "FP_test_note": "Excluded from precision denominator -- test fixtures not filtered via EXCLUDE_PATHS",
+      "FN": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "DH": {
+      "TP": 3,
+      "FP_context": 0,
+      "FP_safe": 0,
+      "FP_test": 0,
+      "FP_test_note": "Excluded from precision denominator -- test fixtures not filtered via EXCLUDE_PATHS",
+      "FN": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "DSA": {
+      "TP": 7,
+      "FP_context": 0,
+      "FP_safe": 0,
+      "FP_test": 0,
+      "FP_test_note": "Excluded from precision denominator -- test fixtures not filtered via EXCLUDE_PATHS",
+      "FN": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "ECDH": {
+      "TP": 11,
+      "FP_context": 13,
+      "FP_safe": 0,
+      "FP_test": 33,
+      "FP_test_note": "Excluded from precision denominator -- test fixtures not filtered via EXCLUDE_PATHS",
+      "FN": 0,
+      "precision": 0.4583,
+      "recall": 1.0,
+      "f1": 0.6286
+    },
+    "ECDSA": {
+      "TP": 100,
+      "FP_context": 35,
+      "FP_safe": 4,
+      "FP_test": 62,
+      "FP_test_note": "Excluded from precision denominator -- test fixtures not filtered via EXCLUDE_PATHS",
+      "FN": 0,
+      "precision": 0.7194,
+      "recall": 1.0,
+      "f1": 0.8368
+    },
+    "Ed25519": {
+      "TP": 22,
+      "FP_context": 5,
+      "FP_safe": 0,
+      "FP_test": 55,
+      "FP_test_note": "Excluded from precision denominator -- test fixtures not filtered via EXCLUDE_PATHS",
+      "FN": 0,
+      "precision": 0.8148,
+      "recall": 1.0,
+      "f1": 0.898
+    },
+    "HARDCODED_KEY": {
+      "TP": 0,
+      "FP_context": 1,
+      "FP_safe": 0,
+      "FP_test": 19,
+      "FP_test_note": "Excluded from precision denominator -- test fixtures not filtered via EXCLUDE_PATHS",
+      "FN": 0,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "MD5": {
+      "TP": 8,
+      "FP_context": 2,
+      "FP_safe": 0,
+      "FP_test": 1,
+      "FP_test_note": "Excluded from precision denominator -- test fixtures not filtered via EXCLUDE_PATHS",
+      "FN": 0,
+      "precision": 0.8,
+      "recall": 1.0,
+      "f1": 0.8889
+    },
+    "PKCS1v15": {
+      "TP": 9,
+      "FP_context": 0,
+      "FP_safe": 0,
+      "FP_test": 0,
+      "FP_test_note": "Excluded from precision denominator -- test fixtures not filtered via EXCLUDE_PATHS",
+      "FN": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "RC4": {
+      "TP": 6,
+      "FP_context": 0,
+      "FP_safe": 0,
+      "FP_test": 0,
+      "FP_test_note": "Excluded from precision denominator -- test fixtures not filtered via EXCLUDE_PATHS",
+      "FN": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "RSA": {
+      "TP": 110,
+      "FP_context": 46,
+      "FP_safe": 0,
+      "FP_test": 0,
+      "FP_test_note": "Excluded from precision denominator -- test fixtures not filtered via EXCLUDE_PATHS",
+      "FN": 0,
+      "precision": 0.7051,
+      "recall": 1.0,
+      "f1": 0.8271
+    },
+    "RSA-1024": {
+      "TP": 2,
+      "FP_context": 0,
+      "FP_safe": 0,
+      "FP_test": 0,
+      "FP_test_note": "Excluded from precision denominator -- test fixtures not filtered via EXCLUDE_PATHS",
+      "FN": 0,
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0
+    },
+    "SHA-1": {
+      "TP": 8,
+      "FP_context": 5,
+      "FP_safe": 2,
+      "FP_test": 18,
+      "FP_test_note": "Excluded from precision denominator -- test fixtures not filtered via EXCLUDE_PATHS",
+      "FN": 0,
+      "precision": 0.5333,
+      "recall": 1.0,
+      "f1": 0.6957
+    },
+    "X25519": {
+      "TP": 5,
+      "FP_context": 1,
+      "FP_safe": 0,
+      "FP_test": 0,
+      "FP_test_note": "Excluded from precision denominator -- test fixtures not filtered via EXCLUDE_PATHS",
+      "FN": 0,
+      "precision": 0.8333,
+      "recall": 1.0,
+      "f1": 0.9091
+    }
+  },
+  "two_tier_analysis": {
+    "AI-enriched": {
+      "TP": 262,
+      "FP_context": 108,
+      "FP_safe": 6,
+      "FP_test": 188,
+      "FP_test_note": "Excluded from precision denominator -- test fixtures not filtered via EXCLUDE_PATHS",
+      "FN": 0,
+      "precision": 0.6968,
+      "recall": 1.0,
+      "f1": 0.8213,
+      "n": 564
+    },
+    "Regex-only": {
+      "TP": 36,
+      "FP_context": 2,
+      "FP_safe": 0,
+      "FP_test": 0,
+      "FP_test_note": "Excluded from precision denominator -- test fixtures not filtered via EXCLUDE_PATHS",
+      "FN": 0,
+      "precision": 0.9474,
+      "recall": 1.0,
+      "f1": 0.973,
+      "n": 38
+    }
+  },
+  "threat_correlation": {
+    "finding_densities": [
+      7.5,
+      9.848484848484848,
+      4.6875,
+      0.6666666666666666,
+      0.960989010989011
+    ],
+    "threat_scores": [
+      6.53,
+      3.54,
+      5.49,
+      7.0,
+      4.2
+    ],
+    "pearson_r": -0.3525,
+    "n_repos": 5
+  }
+}
