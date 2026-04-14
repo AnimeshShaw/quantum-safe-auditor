@@ -3,7 +3,7 @@
 > **An automated three-tier pipeline that scans codebases for quantum-vulnerable cryptography, eliminates false positives using LLM enrichment, ranks findings by quantum attack cost via VQE simulation, and generates actionable migration reports aligned to NIST FIPS 203/204/205.**
 
 [![Python 3.11+](https://img.shields.io/badge/python-3.11+-blue.svg)](https://python.org)
-[![Powered by Claude](https://img.shields.io/badge/AI-Claude%20Sonnet%204.6-orange.svg)](https://anthropic.com)
+[![arXiv](https://img.shields.io/badge/arXiv-2604.00560-b31b1b.svg)](https://arxiv.org/abs/2604.00560)
 [![NIST PQC](https://img.shields.io/badge/NIST-FIPS%20203%2F204%2F205-green.svg)](https://csrc.nist.gov/projects/post-quantum-cryptography)
 [![Qiskit 2.x](https://img.shields.io/badge/Qiskit-2.x%20compatible-6929c4.svg)](https://qiskit.org)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
@@ -88,7 +88,7 @@ Evaluated on 5 widely-used open-source repositories (18,160 ⭐ node-jsonwebtoke
 
 | Feature | Details |
 |---|---|
-| 🤖 **Two-Pass AI Scanning** | Regex sweep → Claude context analysis eliminates false positives |
+| 🤖 **Two-Pass AI Scanning** | Regex sweep → LLM context analysis eliminates false positives |
 | 🔍 **15 Algorithm Classes** | RSA, ECDSA, ECDH, DSA, DH, Ed25519, X25519, PKCS#1 v1.5, RSA-1024, AES-128, MD5, SHA-1, RC4, 3DES, Hardcoded Keys |
 | 🌐 **12 Languages** | Python, JavaScript, TypeScript, Java, Go, Rust, C/C++, C#, Ruby, PHP, Swift, Kotlin |
 | ⚛️ **VQE Quantum Simulation** | Real Qiskit 2.x circuits with qubit-weighted threat scoring |
@@ -137,7 +137,7 @@ Evaluated on 5 widely-used open-source repositories (18,160 ⭐ node-jsonwebtoke
    |  GitHub MCP |  | CryptoScanner  |  |  Notion MCP   |
    |             |  |                |  |               |
    | - Repo tree |  | Pass 1: Regex  |  | - Rich pages  |
-   | - File fetch|  | Pass 2: Claude |  | - Tables      |
+   | - File fetch|  | Pass 2: LLM    |  | - Tables      |
    | - Issues    |  |   AI-enriched  |  | - Code blocks |
    | batch=3     |  |   vs Regex-    |  +---------------+
    | + backoff   |  |   only fallback|
@@ -158,7 +158,7 @@ Evaluated on 5 widely-used open-source repositories (18,160 ⭐ node-jsonwebtoke
 
 1. **Ingest** — GitHub API fetches full repo file tree and source contents in batches of 3 with exponential backoff retry. Binary files, minified JS, and vendor directories are skipped. For large repos, `MAX_FILES` applies priority-weighted crypto-path sampling.
 2. **Scan (Pass 1)** — Pre-compiled regex sweep across all lines for 15 algorithm classes.
-3. **Enrich (Pass 2)** — Claude analyzes each candidate file with language-aware, test-vs-production context detection. Findings tagged `AI-enriched` or `Regex-only`.
+3. **Enrich (Pass 2)** — LLM analyzes each candidate file with language-aware, test-vs-production context detection. Findings tagged `AI-enriched` or `Regex-only`.
 4. **Simulate** — VQE quantum circuit runs via Qiskit 2.x `StatevectorEstimator`. Threat score weighted by logical qubit requirement. Shor-breakable and Grover-weakened algorithms scored on separate branches.
 5. **Report** — Structured JSON with algorithm inventory, severity breakdown, language breakdown, and Pearson correlation between finding density and threat score.
 6. **Publish** — Notion API creates rich formatted report page.
@@ -205,8 +205,8 @@ EXCLUDE_PATHS=tests/
 # Set MAX_FILES=300 for large repos like bc-java.
 MAX_FILES=0
 
-# Claude model
-CLAUDE_MODEL=claude-sonnet-4-6
+# LLM model
+LLM_MODEL=claude-sonnet-4-6
 
 # -- Optional: Notion ----------------------------------------
 NOTION_TOKEN=secret_...
@@ -280,7 +280,7 @@ qsa/
 │   ├── orchestrator.py          ← Entry point
 │   └── config.py
 ├── scanner/
-│   └── crypto_scanner.py        ← Two-pass scanner (regex + Claude)
+│   └── crypto_scanner.py        ← Two-pass scanner (regex + LLM)
 ├── mcp/
 │   ├── github_client.py         ← GitHub API (batch=3, retry, MAX_FILES)
 │   └── notion_client.py         ← Notion API
@@ -323,8 +323,9 @@ If you use this tool or its evaluation corpus in research, please cite:
                for Detecting and Prioritising Post-Quantum Cryptography Migration Risks},
   year      = {2026},
   publisher = {arXiv},
-  note      = {arXiv preprint — DOI to be added upon submission},
-  url       = {https://github.com/AnimeshShaw/quantum-safe-auditor}
+  eprint    = {2604.00560},
+  archivePrefix = {arXiv},
+  url       = {https://arxiv.org/abs/2604.00560}
 }
 ```
 
@@ -347,4 +348,4 @@ If you use this tool or its evaluation corpus in research, please cite:
 
 MIT
 
-*Built by Animesh Shaw · Claude Sonnet 4.6 (Anthropic) · Qiskit 2.x · NIST FIPS 203/204/205*
+Built by Animesh Shaw · Qiskit 2.x · NIST FIPS 203/204/205
