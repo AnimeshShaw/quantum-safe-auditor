@@ -304,9 +304,11 @@ class CryptoFinding:
 
 # ── Scanner ──────────────────────────────────────────────────────────────────
 class CryptoScanner:
-    def __init__(self, client: anthropic.Anthropic,
-                 min_confidence: float = MIN_CONFIDENCE):
+    def __init__(self, client: anthropic.Anthropic = None,
+                 min_confidence: float = MIN_CONFIDENCE,
+                 enricher=None):
         self.client = client
+        self.enricher = enricher
         self.min_confidence = min_confidence
         self.compiled_patterns = {
             algo: [re.compile(p, re.IGNORECASE) for p in info["patterns"]]
@@ -314,14 +316,17 @@ class CryptoScanner:
         }
 
     async def scan_files(self, files: List[Dict[str, Any]]) -> List[CryptoFinding]:
-        tasks = [self._scan_file(f) for f in files]
-        results = await asyncio.gather(*tasks, return_exceptions=True)
+        total = len(files)
         all_findings: List[CryptoFinding] = []
-        for r in results:
-            if isinstance(r, Exception):
-                logger.warning(f"Scan error: {r}")
-            else:
-                all_findings.extend(r)
+        for i, f in enumerate(files, 1):
+            logger.info(f"[{i}/{total}] Scanning: {f['path']}")
+            try:
+                result = await self._scan_file(f)
+                if result:
+                    logger.info(f"  -> {len(result)} finding(s)")
+                all_findings.extend(result)
+            except Exception as exc:
+                logger.warning(f"  -> Scan error: {exc}")
         return self._deduplicate(all_findings)
 
     async def _scan_file(self, file_info: Dict[str, Any]) -> List[CryptoFinding]:
@@ -363,23 +368,43 @@ class CryptoScanner:
         language = _detect_language(path)
         is_test = _is_test_file(path)
 
-        # P0-1: safe truncation at last newline before 2500 chars
-        truncated = full_content[:2500]
-        last_nl = truncated.rfind("\n")
-        if last_nl > 1000:
-            truncated = truncated[:last_nl]
+        enrichments = []
 
-        candidate_summary = "\n".join(
-            f"Line {c['line_number']}: [{c['algorithm']}] {c['code_snippet']}"
-            for c in candidates
-        )
-        test_note = (
-            "FILE TYPE: TEST/SPEC — mark test fixtures as is_test_code=true."
-            if is_test else
-            "FILE TYPE: PRODUCTION — apply full severity assessment."
-        )
+        if self.enricher:
+            # ── Pluggable enricher (Ollama / Claude via factory) ──────────────
+            try:
+                enrichments = await self.enricher.enrich(
+                    path, full_content, candidates, language, is_test
+                )
+            except Exception as e:
+                logger.warning(f"Enricher failed for {path}: {e}. Fallback to regex-only.")
+                enrichments = [
+                    {"line_number": c["line_number"], "algorithm": c["algorithm"],
+                     "is_true_positive": True,
+                     "context": "Regex match — enrichment unavailable",
+                     "is_test_code": is_test, "confidence": 0.5,
+                     "remediation_steps": [f"Replace {c['algorithm']} with {c['pqc_replacement']}"]}
+                    for c in candidates
+                ]
+        else:
+            # ── Legacy direct Claude client path (GitHub-API / orchestrator) ──
+            # P0-1: safe truncation at last newline before 2500 chars
+            truncated = full_content[:2500]
+            last_nl = truncated.rfind("\n")
+            if last_nl > 1000:
+                truncated = truncated[:last_nl]
 
-        prompt = f"""You are a Post-Quantum Cryptography (PQC) security expert auditing source code.
+            candidate_summary = "\n".join(
+                f"Line {c['line_number']}: [{c['algorithm']}] {c['code_snippet']}"
+                for c in candidates
+            )
+            test_note = (
+                "FILE TYPE: TEST/SPEC — mark test fixtures as is_test_code=true."
+                if is_test else
+                "FILE TYPE: PRODUCTION — apply full severity assessment."
+            )
+
+            prompt = f"""You are a Post-Quantum Cryptography (PQC) security expert auditing source code.
 
 Language: {language}
 File: {path}
@@ -413,31 +438,30 @@ Respond ONLY with a JSON array — no markdown, no preamble:
   }}
 ]"""
 
-        enrichments = []
-        try:
-            response = self.client.messages.create(
-                model="claude-sonnet-4-6",
-                max_tokens=2000,
-                messages=[{"role": "user", "content": prompt}]
-            )
-            raw = response.content[0].text.strip()
-            if raw.startswith("```"):
-                raw = raw.split("\n", 1)[1].rsplit("```", 1)[0].strip()
-            enrichments = self._safe_parse(raw)
-        except Exception as e:
-            logger.warning(f"AI enrichment failed for {path}: {e}. Fallback to regex-only.")
-            # Confidence 0.5: deliberately below the default MIN_CONFIDENCE=0.6 threshold
-            # so regex-only findings are excluded from results unless the user explicitly
-            # sets MIN_CONFIDENCE=0.5 in .env. This prevents FPs from leaked string literals,
-            # error messages, and PQC algorithm names (ML-DSA etc.) matching legacy patterns.
-            enrichments = [
-                {"line_number": c["line_number"], "algorithm": c["algorithm"],
-                 "is_true_positive": True,
-                 "context": "Regex match - AI enrichment unavailable",
-                 "is_test_code": is_test, "confidence": 0.5,
-                 "remediation_steps": [f"Replace {c['algorithm']} with {c['pqc_replacement']}"]}
-                for c in candidates
-            ]
+            try:
+                response = self.client.messages.create(
+                    model="claude-sonnet-4-6",
+                    max_tokens=2000,
+                    messages=[{"role": "user", "content": prompt}]
+                )
+                raw = response.content[0].text.strip()
+                if raw.startswith("```"):
+                    raw = raw.split("\n", 1)[1].rsplit("```", 1)[0].strip()
+                enrichments = self._safe_parse(raw)
+            except Exception as e:
+                logger.warning(f"AI enrichment failed for {path}: {e}. Fallback to regex-only.")
+                # Confidence 0.5: deliberately below the default MIN_CONFIDENCE=0.6 threshold
+                # so regex-only findings are excluded from results unless the user explicitly
+                # sets MIN_CONFIDENCE=0.5 in .env. This prevents FPs from leaked string literals,
+                # error messages, and PQC algorithm names (ML-DSA etc.) matching legacy patterns.
+                enrichments = [
+                    {"line_number": c["line_number"], "algorithm": c["algorithm"],
+                     "is_true_positive": True,
+                     "context": "Regex match - AI enrichment unavailable",
+                     "is_test_code": is_test, "confidence": 0.5,
+                     "remediation_steps": [f"Replace {c['algorithm']} with {c['pqc_replacement']}"]}
+                    for c in candidates
+                ]
 
         enrich_map = {(e["line_number"], e["algorithm"]): e for e in enrichments}
         findings: List[CryptoFinding] = []

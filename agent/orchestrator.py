@@ -17,12 +17,11 @@ import os
 from datetime import datetime
 from typing import Optional
 
-import anthropic
-
 from agent.config import AuditorConfig, startup_check
 from mcp.github_client import GitHubMCPClient
 from mcp.notion_client import NotionMCPClient
 from scanner.crypto_scanner import CryptoScanner
+from scanner.enricher_factory import get_enricher
 from quantum.vqe_demo import VQEThreatDemo
 from reports.report_builder import ReportBuilder
 
@@ -49,11 +48,10 @@ class QuantumSafeAuditorAgent:
 
     def __init__(self, config: AuditorConfig):
         self.config = config
-        self.client = anthropic.Anthropic(api_key=config.anthropic_api_key)
         self.github = GitHubMCPClient(config.github_token,
                                        verbose_errors=config.github_verbose_errors)
         self.notion = NotionMCPClient(config.notion_token)
-        self.scanner = CryptoScanner(self.client,
+        self.scanner = CryptoScanner(enricher=get_enricher(),
                                       min_confidence=config.min_confidence)
         self.vqe = VQEThreatDemo()
         self.report_builder = ReportBuilder()
@@ -193,10 +191,8 @@ async def main():
     startup_check()
 
     config = AuditorConfig(
-        anthropic_api_key=os.getenv("ANTHROPIC_API_KEY"),
         github_token=os.getenv("GITHUB_TOKEN"),
         notion_token=os.getenv("NOTION_TOKEN"),
-        claude_model=os.getenv("CLAUDE_MODEL", "claude-sonnet-4-6"),
     )
 
     agent = QuantumSafeAuditorAgent(config)

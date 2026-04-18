@@ -9,7 +9,7 @@ from typing import Optional, List
 
 logger = logging.getLogger(__name__)
 
-REQUIRED_VARS = ["ANTHROPIC_API_KEY", "GITHUB_TOKEN", "TARGET_REPO"]
+REQUIRED_VARS = ["GITHUB_TOKEN", "TARGET_REPO"]
 
 
 def validate_env() -> List[str]:
@@ -35,9 +35,6 @@ def startup_check():
 class AuditorConfig:
     """All configuration needed to run the audit pipeline."""
 
-    # Required
-    anthropic_api_key: str
-
     # MCP integrations (optional — agent works without them)
     github_token: Optional[str] = None
     notion_token: Optional[str] = None
@@ -57,9 +54,6 @@ class AuditorConfig:
 
     # Confidence threshold — passed to CryptoScanner
     min_confidence: float = float(os.getenv("MIN_CONFIDENCE", "0.6"))
-
-    # Claude model
-    claude_model: str = os.getenv("CLAUDE_MODEL", "claude-sonnet-4-6")
 
     # GitHub Issues settings
     issue_label: str = "quantum-vulnerability"

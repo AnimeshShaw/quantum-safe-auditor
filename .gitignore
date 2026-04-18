@@ -103,3 +103,12 @@ qiskit_cache/
 htmlcov/
 .pytest_cache/
 .tox/
+
+# Local Claude Code context (not for version control)
+CLAUDE.md
+
+# Cloned evaluation repos (large, re-cloneable via clone_repos.ps1)
+repos/
+
+# Local scan results
+results/local/
