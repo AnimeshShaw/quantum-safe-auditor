@@ -110,5 +110,6 @@ CLAUDE.md
 # Cloned evaluation repos (large, re-cloneable via clone_repos.ps1)
 repos/
 
-# Local scan results
+# Scan results (regenerable)
 results/local/
+results/paper2/

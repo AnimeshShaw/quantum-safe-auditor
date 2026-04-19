@@ -3,13 +3,13 @@ evaluate.py — Compute precision, recall, F1 for Paper 1 evaluation.
 
 Usage:
     python evaluation/evaluate.py \
-        --ground-truth evaluation/labeling_sample_HandLabeled.csv \
-        --results results/audit_result_python_rsa.json \
-                  results/audit_result_python_ecdsa.json \
-                  results/audit_result_python_jose.json \
-                  results/audit_result_node_jwt.json \
-                  results/audit_result_bc_java.json \
-        --output evaluation/metrics.json
+        --ground-truth evaluation/paper1/labeling_sample_HandLabeled.csv \
+        --results results/paper1/audit_result_python_rsa.json \
+                  results/paper1/audit_result_python_ecdsa.json \
+                  results/paper1/audit_result_python_jose.json \
+                  results/paper1/audit_result_node_jwt.json \
+                  results/paper1/audit_result_bc_java.json \
+        --output evaluation/paper1/metrics.json
 
 Ground truth CSV columns (after hand-labeling):
     label, repo, file_path, line, algorithm, severity, confidence,
@@ -194,8 +194,8 @@ def main():
                         help="One or more audit_result.json paths")
     parser.add_argument("--baseline", nargs="+",
                         help="Regex-only audit_result.json files for lift comparison")
-    parser.add_argument("--output", default="evaluation/metrics.json",
-                        help="Output JSON path (default: evaluation/metrics.json)")
+    parser.add_argument("--output", default="evaluation/paper1/metrics.json",
+                        help="Output JSON path (default: evaluation/paper1/metrics.json)")
     args = parser.parse_args()
 
     # ---- Load ----

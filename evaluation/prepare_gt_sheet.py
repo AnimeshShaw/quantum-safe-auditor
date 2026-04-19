@@ -180,7 +180,7 @@ def print_summary(rows: list):
 def main():
     parser = argparse.ArgumentParser(description="Prepare ground truth CSV from audit results")
     parser.add_argument("--results-dir", default="results", help="Directory containing audit_result_*.json files")
-    parser.add_argument("--output", default="evaluation/ground_truth.csv", help="Output CSV path")
+    parser.add_argument("--output", default="evaluation/paper1/ground_truth.csv", help="Output CSV path")
     args = parser.parse_args()
 
     print("\n── Quantum-Safe Auditor: Ground Truth Sheet Generator ─────")
@@ -215,15 +215,15 @@ def main():
     write_csv(rows, args.output)
 
     # Write instructions file
-    inst_path = "evaluation/ground_truth_instructions.txt"
+    inst_path = "evaluation/paper1/ground_truth_instructions.txt"
     with open(inst_path, "w") as f:
         f.write(INSTRUCTIONS)
     print(f"Wrote instructions → {inst_path}")
 
     remaining = sum(1 for r in rows if r["label"] == "?")
     print(f"\n── Next steps ──────────────────────────────────────────────")
-    print(f"  1. Open evaluation/ground_truth.csv in Excel or VS Code")
-    print(f"  2. Read evaluation/ground_truth_instructions.txt")
+    print(f"  1. Open evaluation/paper1/ground_truth.csv in Excel or VS Code")
+    print(f"  2. Read evaluation/paper1/ground_truth_instructions.txt")
     print(f"  3. Change each '?' in the label column to one of:")
     print(f"       TP / FP-Context / FP-Safe / FP-Test")
     print(f"  4. Add FN rows for any findings the tool missed")
@@ -231,7 +231,7 @@ def main():
     print(f"  {remaining} rows need labeling")
     print(f"\n  Then run:")
     print(f"    python evaluation/evaluate.py \\")
-    print(f"      --ground-truth evaluation/ground_truth.csv \\")
+    print(f"      --ground-truth evaluation/paper1/ground_truth.csv \\")
     print(f"      --results results/audit_result_*.json")
     print()
 

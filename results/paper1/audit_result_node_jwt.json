@@ -1,0 +1,245 @@
+{
+  "repo_url": "https://github.com/AnimeshShaw/node-jsonwebtoken",
+  "audit_id": "PQC-20260309-192710",
+  "started_at": "2026-03-09T19:26:25.376121",
+  "completed_at": "2026-03-09T19:27:10.750917",
+  "duration_seconds": 45.37,
+  "files_scanned": 12,
+  "qiskit_version": "2.3.0",
+  "findings": [
+    {
+      "algorithm": "RSA",
+      "severity": "CRITICAL",
+      "file_path": "lib/validateAsymmetricKey.js",
+      "line_number": 6,
+      "code_snippet": "'rsa': ['RS256', 'PS256', 'RS384', 'PS384', 'RS512', 'PS512'],",
+      "pqc_replacement": "ML-KEM (CRYSTALS-Kyber, FIPS 203) for encryption; ML-DSA (CRYSTALS-Dilithium, FIPS 204) for signatures",
+      "nist_standard": "FIPS 203 / FIPS 204",
+      "quantum_threat": "Shor's algorithm factors RSA moduli in polynomial time. RSA-2048 requires ~4,096 logical qubits.",
+      "confidence": 0.95,
+      "context": "The 'rsa' key type is mapped to RS256, PS256, RS384, PS384, RS512, PS512 algorithms in the allowedAlgorithmsForKeys lookup table, actively permitting RSA-based JWT signing and verification in production.",
+      "is_test_code": false,
+      "language": "JavaScript",
+      "cnsa2_status": "New use: disallow by 2025; retire by 2030",
+      "logical_qubits": 4096,
+      "qubit_reference": "Roetteler et al. 2017",
+      "remediation_steps": [
+        "Remove or deprecate RSA key type support from allowedAlgorithmsForKeys and replace with PQC-safe alternatives such as ML-DSA (CRYSTALS-Dilithium): `const allowedAlgorithmsForKeys = { 'ec': ['ES256', 'ES384', 'ES512'], 'ml-dsa': ['ML-DSA-44', 'ML-DSA-65', 'ML-DSA-87'] };`",
+        "Add a runtime deprecation warning if RSA keys are still temporarily permitted during migration: `if (keyType === 'rsa') { process.emitWarning('RSA keys are deprecated and will be removed. Migrate to ML-DSA (CRYSTALS-Dilithium) or SLH-DSA (SPHINCS+).', 'DeprecationWarning'); }`",
+        "Enforce a minimum key size check as a short-term mitigation if RSA cannot be immediately removed: `if (keyType === 'rsa' && key.asymmetricKeyDetails && key.asymmetricKeyDetails.modulusLength < 4096) { throw new Error('RSA keys must be at least 4096 bits; prefer migrating to PQC algorithms such as ML-DSA.'); }`"
+      ]
+    },
+    {
+      "algorithm": "RSA",
+      "severity": "CRITICAL",
+      "file_path": "lib/validateAsymmetricKey.js",
+      "line_number": 7,
+      "code_snippet": "'rsa-pss': ['PS256', 'PS384', 'PS512']",
+      "pqc_replacement": "ML-KEM (CRYSTALS-Kyber, FIPS 203) for encryption; ML-DSA (CRYSTALS-Dilithium, FIPS 204) for signatures",
+      "nist_standard": "FIPS 203 / FIPS 204",
+      "quantum_threat": "Shor's algorithm factors RSA moduli in polynomial time. RSA-2048 requires ~4,096 logical qubits.",
+      "confidence": 0.95,
+      "context": "The 'rsa-pss' key type is mapped to PS256, PS384, PS512 in the allowedAlgorithmsForKeys lookup table, actively enabling RSA-PSS signature operations in production JWT workflows.",
+      "is_test_code": false,
+      "language": "JavaScript",
+      "cnsa2_status": "New use: disallow by 2025; retire by 2030",
+      "logical_qubits": 4096,
+      "qubit_reference": "Roetteler et al. 2017",
+      "remediation_steps": [
+        "Remove 'rsa-pss' from allowedAlgorithmsForKeys and introduce PQC signature algorithm identifiers such as SLH-DSA or ML-DSA: `const allowedAlgorithmsForKeys = { 'ec': ['ES256', 'ES384', 'ES512'], 'ml-dsa': ['ML-DSA-44', 'ML-DSA-65', 'ML-DSA-87'], 'slh-dsa': ['SLH-DSA-SHA2-128s', 'SLH-DSA-SHA2-256s'] };`",
+        "Emit a deprecation warning when RSA-PSS keys are detected during the transition period: `if (keyType === 'rsa-pss') { process.emitWarning('RSA-PSS is not quantum-safe. Migrate to ML-DSA (CRYSTALS-Dilithium) or SLH-DSA (SPHINCS+).', 'DeprecationWarning'); }`",
+        "Validate RSA-PSS key size as a short-term hardening measure while PQC migration is underway: `if (keyType === 'rsa-pss' && key.asymmetricKeyDetails && key.asymmetricKeyDetails.modulusLength < 4096) { throw new Error('RSA-PSS keys must be at least 4096 bits; plan migration to PQC algorithms.'); }`"
+      ]
+    },
+    {
+      "algorithm": "ECDSA",
+      "severity": "CRITICAL",
+      "file_path": "lib/validateAsymmetricKey.js",
+      "line_number": 11,
+      "code_snippet": "ES256: 'prime256v1',",
+      "pqc_replacement": "ML-DSA (CRYSTALS-Dilithium, FIPS 204) or SLH-DSA (SPHINCS+, FIPS 205)",
+      "nist_standard": "FIPS 204 / FIPS 205",
+      "quantum_threat": "Shor's algorithm solves the elliptic curve discrete log problem. P-256 requires ~2,330 logical qubits.",
+      "confidence": 0.9,
+      "context": "ES256 is mapped to the NIST P-256 curve (prime256v1) in the allowedCurves table, and this mapping is actively enforced at runtime to validate EC key parameters for JWT operations.",
+      "is_test_code": false,
+      "language": "JavaScript",
+      "cnsa2_status": "New use: disallow by 2025; retire by 2030",
+      "logical_qubits": 2330,
+      "qubit_reference": "Banegas et al. 2021",
+      "remediation_steps": [
+        "Replace ECDSA curve mappings with PQC algorithm identifiers; if hybrid schemes are needed during transition, pair ECDSA with ML-DSA: `const allowedCurves = { 'ML-DSA-44': 'ml-dsa-44', 'ML-DSA-65': 'ml-dsa-65', 'ML-DSA-87': 'ml-dsa-87' };`",
+        "Add a deprecation warning for EC key types to prompt migration: `if (keyType === 'ec') { process.emitWarning('ECDSA with NIST curves is not quantum-safe. Plan migration to ML-DSA or SLH-DSA.', 'DeprecationWarning'); }`",
+        "If ECDSA must be retained short-term, restrict to P-384 or P-521 only and log audit events: `const allowedCurves = { ES384: 'secp384r1', ES512: 'secp521r1' }; // P-256 removed as weakest option; full PQC migration required.`"
+      ]
+    },
+    {
+      "algorithm": "ECDSA",
+      "severity": "CRITICAL",
+      "file_path": "lib/validateAsymmetricKey.js",
+      "line_number": 12,
+      "code_snippet": "ES384: 'secp384r1',",
+      "pqc_replacement": "ML-DSA (CRYSTALS-Dilithium, FIPS 204) or SLH-DSA (SPHINCS+, FIPS 205)",
+      "nist_standard": "FIPS 204 / FIPS 205",
+      "quantum_threat": "Shor's algorithm solves the elliptic curve discrete log problem. P-256 requires ~2,330 logical qubits.",
+      "confidence": 0.9,
+      "context": "ES384 is mapped to the NIST P-384 curve (secp384r1) in the allowedCurves table, and this mapping is actively enforced at runtime to validate EC key parameters for JWT operations.",
+      "is_test_code": false,
+      "language": "JavaScript",
+      "cnsa2_status": "New use: disallow by 2025; retire by 2030",
+      "logical_qubits": 2330,
+      "qubit_reference": "Banegas et al. 2021",
+      "remediation_steps": [
+        "Remove ECDSA curve mappings from production configuration and introduce PQC key type validation logic: `const allowedPQCKeyTypes = { 'ml-dsa': ['ML-DSA-44', 'ML-DSA-65', 'ML-DSA-87'], 'slh-dsa': ['SLH-DSA-SHA2-128s', 'SLH-DSA-SHAKE-256s'] };`",
+        "Emit a deprecation warning specifically for ES384/P-384 usage: `if (algorithm === 'ES384') { process.emitWarning('ES384 (secp384r1) is vulnerable to quantum attacks via Shor\\'s algorithm. Migrate to ML-DSA-65 or SLH-DSA.', 'DeprecationWarning'); }`",
+        "As an interim measure, enforce key usage audit logging for all ECDSA operations to track migration progress: `console.warn('[SECURITY AUDIT] ECDSA operation detected:', { algorithm, keyType, curve: key.asymmetricKeyDetails?.namedCurve }); // Remove once PQC migration complete.`"
+      ]
+    },
+    {
+      "algorithm": "RSA",
+      "severity": "CRITICAL",
+      "file_path": "lib/validateAsymmetricKey.js",
+      "line_number": 50,
+      "code_snippet": "case 'rsa-pss':",
+      "pqc_replacement": "ML-KEM (CRYSTALS-Kyber, FIPS 203) for encryption; ML-DSA (CRYSTALS-Dilithium, FIPS 204) for signatures",
+      "nist_standard": "FIPS 203 / FIPS 204",
+      "quantum_threat": "Shor's algorithm factors RSA moduli in polynomial time. RSA-2048 requires ~4,096 logical qubits.",
+      "confidence": 0.95,
+      "context": "The 'rsa-pss' case in the switch statement actively executes runtime validation of RSA-PSS key parameters (hash algorithm, MGF1 hash, and salt length) for production JWT signing and verification.",
+      "is_test_code": false,
+      "language": "JavaScript",
+      "cnsa2_status": "New use: disallow by 2025; retire by 2030",
+      "logical_qubits": 4096,
+      "qubit_reference": "Roetteler et al. 2017",
+      "remediation_steps": [
+        "Replace the 'rsa-pss' case block with a PQC key validation case, rejecting RSA-PSS keys outright after a deprecation grace period: `case 'rsa-pss': throw new Error('RSA-PSS keys are no longer supported. Use ML-DSA or SLH-DSA PQC keys.'); break;`",
+        "During the migration period, wrap RSA-PSS validation with a configurable deprecation flag: `case 'rsa-pss': if (!process.env.ALLOW_LEGACY_RSA_PSS) { throw new Error('RSA-PSS is disabled. Set ALLOW_LEGACY_RSA_PSS=1 only for migration purposes.'); } /* existing validation */ break"
+      ]
+    },
+    {
+      "algorithm": "RSA",
+      "severity": "CRITICAL",
+      "file_path": "lib/validateAsymmetricKey.js",
+      "line_number": 56,
+      "code_snippet": "throw new Error(`Invalid key for this operation, its RSA-PSS parameters do not meet the requirements of \"alg\" ${algorithm}.`);",
+      "pqc_replacement": "ML-KEM (CRYSTALS-Kyber, FIPS 203) for encryption; ML-DSA (CRYSTALS-Dilithium, FIPS 204) for signatures",
+      "nist_standard": "FIPS 203 / FIPS 204",
+      "quantum_threat": "Shor's algorithm factors RSA moduli in polynomial time. RSA-2048 requires ~4,096 logical qubits.",
+      "confidence": 0.7,
+      "context": "",
+      "is_test_code": false,
+      "language": "JavaScript",
+      "cnsa2_status": "New use: disallow by 2025; retire by 2030",
+      "logical_qubits": 4096,
+      "qubit_reference": "Roetteler et al. 2017",
+      "remediation_steps": []
+    },
+    {
+      "algorithm": "RSA",
+      "severity": "CRITICAL",
+      "file_path": "lib/validateAsymmetricKey.js",
+      "line_number": 60,
+      "code_snippet": "throw new Error(`Invalid key for this operation, its RSA-PSS parameter saltLength does not meet the requirements of \"alg\" ${algorithm}.`)",
+      "pqc_replacement": "ML-KEM (CRYSTALS-Kyber, FIPS 203) for encryption; ML-DSA (CRYSTALS-Dilithium, FIPS 204) for signatures",
+      "nist_standard": "FIPS 203 / FIPS 204",
+      "quantum_threat": "Shor's algorithm factors RSA moduli in polynomial time. RSA-2048 requires ~4,096 logical qubits.",
+      "confidence": 0.7,
+      "context": "",
+      "is_test_code": false,
+      "language": "JavaScript",
+      "cnsa2_status": "New use: disallow by 2025; retire by 2030",
+      "logical_qubits": 4096,
+      "qubit_reference": "Roetteler et al. 2017",
+      "remediation_steps": []
+    },
+    {
+      "algorithm": "RSA",
+      "severity": "CRITICAL",
+      "file_path": "verify.js",
+      "line_number": 135,
+      "code_snippet": "} else if (['rsa', 'rsa-pss'].includes(secretOrPublicKey.asymmetricKeyType)) {",
+      "pqc_replacement": "ML-KEM (CRYSTALS-Kyber, FIPS 203) for encryption; ML-DSA (CRYSTALS-Dilithium, FIPS 204) for signatures",
+      "nist_standard": "FIPS 203 / FIPS 204",
+      "quantum_threat": "Shor's algorithm factors RSA moduli in polynomial time. RSA-2048 requires ~4,096 logical qubits.",
+      "confidence": 0.95,
+      "context": "Production JWT verification logic explicitly checks for RSA and RSA-PSS asymmetric key types to route key validation, enabling classical RSA-based signature verification which is vulnerable to quantum attacks via Shor's algorithm.",
+      "is_test_code": false,
+      "language": "JavaScript",
+      "cnsa2_status": "New use: disallow by 2025; retire by 2030",
+      "logical_qubits": 4096,
+      "qubit_reference": "Roetteler et al. 2017",
+      "remediation_steps": [
+        "Replace RSA/RSA-PSS key type acceptance with a PQC-safe allowlist; for example, introduce a constant and guard: `const PQC_ALLOWED_KEY_TYPES = ['ed25519', 'ed448', 'x25519', 'x448']; // extend with ML-DSA/Dilithium OIDs when Node.js crypto support lands\nif (PQC_ALLOWED_KEY_TYPES.includes(secretOrPublicKey.asymmetricKeyType)) { /* handle PQC keys */ } else if (['rsa', 'rsa-pss'].includes(secretOrPublicKey.asymmetricKeyType)) { if (!options.allowLegacyRSA) return done(new JsonWebTokenError('RSA keys are deprecated; use PQC algorithms')); }`",
+        "Add a migration shim that logs a deprecation warning and enforces a sunset date for RSA keys: `const RSA_SUNSET_DATE = new Date('2026-01-01'); if (['rsa', 'rsa-pss'].includes(secretOrPublicKey.asymmetricKeyType)) { console.warn('[SECURITY] RSA asymmetric key detected in JWT verification. RSA is not quantum-safe and will be rejected after ' + RSA_SUNSET_DATE.toISOString()); if (Date.now() > RSA_SUNSET_DATE.getTime()) { return done(new JsonWebTokenError('RSA keys are no longer accepted; migrate to ML-DSA or Ed448')); } }`",
+        "Update the algorithm allowlists at the top of the file to include PQC algorithm identifiers and remove RSA-only entries once migration is complete: `// Replace PUB_KEY_ALGS and RSA_KEY_ALGS with:\nconst PQC_KEY_ALGS = ['EdDSA']; // Add 'ML-DSA-44','ML-DSA-65','ML-DSA-87' when JOSE/jws library support is available\nconst LEGACY_RSA_KEY_ALGS = options.allowLegacyRSA ? ['RS256','RS384','RS512','PS256','PS384','PS512'] : [];\nconst ALLOWED_ALGS = [...PQC_KEY_ALGS, ...LEGACY_RSA_KEY_ALGS];`"
+      ]
+    }
+  ],
+  "severity_summary": {
+    "CRITICAL": 8,
+    "HIGH": 0,
+    "MEDIUM": 0,
+    "LOW": 0
+  },
+  "algorithm_summary": {
+    "RSA": 6,
+    "ECDSA": 2
+  },
+  "algorithm_inventory": {
+    "RSA": {
+      "count": 6,
+      "severity": "CRITICAL"
+    },
+    "ECDSA": {
+      "count": 2,
+      "severity": "CRITICAL"
+    }
+  },
+  "language_summary": {
+    "JavaScript": 8
+  },
+  "quantum_analysis": {
+    "threat_score": 7.0,
+    "threat_label": "\ud83d\udfe0 HIGH \u2014 Urgent migration recommended",
+    "quantum_readiness_score": 30,
+    "harvest_now_decrypt_later_risk": true,
+    "recommended_migration_urgency": "Urgent (6\u201312 months)",
+    "shor_vulnerable_algorithms": [
+      "RSA",
+      "ECDSA"
+    ],
+    "grover_vulnerable_algorithms": [],
+    "max_qubit_requirement": 4096,
+    "max_qubit_algorithm": "RSA",
+    "vqe_baseline": {
+      "molecule": "H2 (STO-3G basis)",
+      "ground_state_energy_hartree": -1.857129,
+      "exact_energy_hartree": -1.137306,
+      "energy_error_hartree": 0.719823,
+      "optimizer_iterations": "200",
+      "ansatz": "TwoLocal(ry,rz,cx,reps=2)",
+      "method": "Qiskit VQE (StatevectorEstimator V2 + COBYLA)",
+      "relevance": "VQE demonstrates quantum eigenvalue computation \u2014 the same class of quantum advantage exploited by Shor's algorithm for period finding."
+    },
+    "shor_simulation": {
+      "method": "QFT circuit (Shor's subroutine)",
+      "n_qubits": 4,
+      "top_measurement_outcomes": [
+        "0000"
+      ],
+      "relevance": "Quantum Fourier Transform is the key subroutine of Shor's algorithm for breaking RSA/ECDSA."
+    },
+    "qiskit_version": "2.3.0",
+    "total_findings_analyzed": 8,
+    "pearson_correlation": "Single-repo run: density=8, score=7.00 \u2014 compute r across corpus for significance.",
+    "finding_density": 8,
+    "max_logical_qubits_in_corpus": 4096,
+    "total_logical_qubits_sum": 29236
+  },
+  "overall_risk": "CRITICAL",
+  "pqc_ready": false,
+  "github_issues": [
+    "https://github.com/AnimeshShaw/node-jsonwebtoken/issues/1",
+    "https://github.com/AnimeshShaw/node-jsonwebtoken/issues/2"
+  ]
+}

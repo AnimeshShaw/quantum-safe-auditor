@@ -41,9 +41,9 @@ import sys
 from collections import defaultdict
 
 RANDOM_SEED     = 42
-INPUT_CSV       = os.path.join("evaluation", "ground_truth.csv")
-SAMPLE_CSV      = os.path.join("evaluation", "labeling_sample.csv")
-SPOTCHK_CSV     = os.path.join("evaluation", "bc_java_spot_check.csv")
+INPUT_CSV       = os.path.join("evaluation", "paper1", "ground_truth.csv")
+SAMPLE_CSV      = os.path.join("evaluation", "paper1", "labeling_sample.csv")
+SPOTCHK_CSV     = os.path.join("evaluation", "paper1", "bc_java_spot_check.csv")
 
 TARGET_TOTAL    = 400
 BC_SPOT_CHECK   = 50
@@ -205,9 +205,9 @@ def main():
 
   Step 3 - Run evaluate.py
     python evaluation/evaluate.py \\
-        --ground-truth evaluation/labeling_sample.csv \\
-        --results results/audit_result_*.json \\
-        --output evaluation/metrics.json
+        --ground-truth evaluation/paper1/labeling_sample.csv \\
+        --results results/paper1/audit_result_*.json \\
+        --output evaluation/paper1/metrics.json
 
   Total labeling time estimate: ~3 hours
 """)

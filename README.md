@@ -258,16 +258,16 @@ Qiskit 2.x fully supported. Uses `StatevectorEstimator` + COBYLA. No `qiskit_alg
 ```bash
 # 1. Generate labeling samples
 python evaluation/sample_for_labeling.py
-# Creates: evaluation/bc_java_spot_check.csv (50 rows)
-#          evaluation/labeling_sample.csv (~530 rows)
+# Creates: evaluation/paper1/bc_java_spot_check.csv (50 rows)
+#          evaluation/paper1/labeling_sample.csv (~530 rows)
 
 # 2. Label both files (see SETUP.md labeling guide)
 
 # 3. Compute precision/recall/F1
 python evaluation/evaluate.py \
-  --ground-truth evaluation/labeling_sample_HandLabeled.csv \
-  --results results/audit_result_*.json \
-  --output evaluation/metrics.json
+  --ground-truth evaluation/paper1/labeling_sample_HandLabeled.csv \
+  --results results/paper1/audit_result_*.json \
+  --output evaluation/paper1/metrics.json
 ```
 
 ---

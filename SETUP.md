@@ -195,7 +195,7 @@ Use `-m agent.orchestrator`, not `python agent/orchestrator.py`.
 Output goes to `audit_result.json` in the `qsa/` directory. Rename immediately if running multiple repos:
 
 ```bash
-mv audit_result.json results/audit_result_python_rsa.json
+mv audit_result.json results/paper1/audit_result_python_rsa.json
 ```
 
 ---
@@ -258,8 +258,8 @@ This creates two files:
 
 | File | Rows | Purpose |
 |---|---|---|
-| `evaluation/bc_java_spot_check.csv` | 50 | Validates bc-java TP rate |
-| `evaluation/labeling_sample.csv` | ~530 | Main labeling set for paper |
+| `evaluation/paper1/bc_java_spot_check.csv` | 50 | Validates bc-java TP rate |
+| `evaluation/paper1/labeling_sample.csv` | ~530 | Main labeling set for paper |
 
 Both files have an `enrichment_source` column:
 - `AI-enriched` — Claude analyzed the file. Low FP rate.
@@ -305,13 +305,13 @@ This is the file that goes into `evaluate.py`.
 
 ```bash
 python evaluation/evaluate.py \
-  --ground-truth evaluation/labeling_sample_HandLabeled.csv \
-  --results results/audit_result_python_rsa.json \
-           results/audit_result_python_ecdsa.json \
-           results/audit_result_python_jose.json \
-           results/audit_result_node_jwt.json \
-           results/audit_result_bc_java.json \
-  --output evaluation/metrics.json
+  --ground-truth evaluation/paper1/labeling_sample_HandLabeled.csv \
+  --results results/paper1/audit_result_python_rsa.json \
+           results/paper1/audit_result_python_ecdsa.json \
+           results/paper1/audit_result_python_jose.json \
+           results/paper1/audit_result_node_jwt.json \
+           results/paper1/audit_result_bc_java.json \
+  --output evaluation/paper1/metrics.json
 ```
 
 The output contains:
